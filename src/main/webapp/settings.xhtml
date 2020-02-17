@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">إعدادات النظام</ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g" dir="rtl">
+            <div class="ui-g-12">
+                
+                 
+				
+				<p:outputPanel  id="formContainer">
+	                <p:panel styleClass="card customInputs" >
+                        
+                        <h1>إعدادات النظام</h1>
+			            
+			            <p:growl id="growl"  life="3000" />
+			            
+			            <p:panelGrid style="width:100%" columns="3" styleClass="ui-noborder rtlTable" columnClasses="ui-g-25,ui-g-4,ui-g-4">
+			               
+			               <p:outputLabel value="رابط خدمة الرسائل القصيرة" />
+			               <p:inputTextarea id="smsURL" value="#{applicationConfigBean.applicationConfig.smsURL}" title="يجب استبدال قيمة اسم المستخدم ب {userNameParam} وقيمة كلمة المرور ب {passwordParam} وقيمة نص الرسالة ب {messageParam} وقيمة رقم الجوال ب {mobileNumberParam}"/>
+			               <p:tooltip for="smsURL" position="top" style="direction:rtl" showEvent="focus" hideEvent="blur" />
+			               
+			               <p:outputLabel value="اسم مستخدم خدمة الرسائل القصيرة" />
+			               <p:inputText  value="#{applicationConfigBean.applicationConfig.smsUserName}"/>
+			               <p:outputLabel value=""/>
+			               
+			               <p:outputLabel value="كلمة مرور خدمة الرسائل القصيرة" />
+			               <p:inputText  value="#{applicationConfigBean.applicationConfig.smsUserPassword}"/>
+			               <p:outputLabel value=""/>
+			               
+                           <p:outputLabel value="نص رسالة خدمة الرسائل القصيرة" />
+			               <p:inputTextarea id="smsMessage"  value="#{applicationConfigBean.applicationConfig.smsMessage}" title="يجب استبدال قيمة رقم الإيصال ب {receiptNumberParam} وقيمة مبلغ التبرع ب {amountParam}"/>
+			               <p:tooltip for="smsMessage" position="top" style="direction:rtl" showEvent="focus" hideEvent="blur" />
+			               			            
+			             </p:panelGrid>
+					      
+					    
+					    <p:commandButton update="formContainer" value="حفظ" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();" action="#{applicationConfigBean.saveConfig}" style="margin-top:10px" icon="fa fa-save" />
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                
+            </div>
+            
+            
+        </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

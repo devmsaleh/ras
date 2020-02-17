@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:loadBundle basename="bundle" var="bundle" />
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>#{bundle.appName}</title>
+        <h:outputScript name="js/layout.js" library="serenity-layout" />
+        <h:outputScript name="js/ripple.js" library="serenity-layout" />
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/images/favicon.ico"/>
+    </h:head>
+
+    <h:body styleClass="login-body">
+        
+		<form action="#{request.contextPath}/login" method="post">
+		<div class="login-panel ui-fluid">
+            <div class="login-panel-header">
+                <p:graphicImage name="images/logo-large.jpg" library="serenity-layout" />
+            </div>
+            <div class="login-panel-content"> 
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <h1>#{bundle.appName} - #{bundle.login}</h1>
+                    </div>
+                    <div class="ui-g-12">
+                        <h:panelGroup styleClass="md-inputfield">
+                            <p:inputText id="username" autocomplete="off" />
+                            <label>#{bundle.username}</label>
+                        </h:panelGroup>
+                    </div>
+                    <div class="ui-g-12">
+                        <h:panelGroup styleClass="md-inputfield">
+                            <p:password id="password" autocomplete="off" />
+                            <label>#{bundle.password}</label>
+                        </h:panelGroup>
+                    </div>
+                    <div class="ui-g-6 " style="display:none">
+                        <p:selectBooleanCheckbox id="rememberme" />
+                        <p:outputLabel for="rememberme" value="Remember Me?" />
+                    </div>
+                    <div class="ui-g-6 password-reset" style="display:none">
+                        <h:outputLink>Reset Password</h:outputLink>
+                    </div>
+                    <div class="ui-g-12">
+					    <h:commandButton styleClass="ui-button" style="color:white;padding: .3em 1em .3em 2.1em;"  value="#{bundle.login}"  />                       
+                    </div>
+                    
+					<div class="ui-g-12">
+	                    <h:panelGroup rendered="#{param.error != null}" id="errorMessage" layout="block" styleClass="ui-messages-error ui-corner-all">
+	      				    <h:panelGroup styleClass="ui-messages-error-icon"></h:panelGroup>
+	      				    <h:panelGroup styleClass="ui-messages-error-detail">#{bundle.loginError}</h:panelGroup>
+	    			     </h:panelGroup>
+    			    </div>
+					 
+                </div>
+            </div>
+        </div>
+		</form>
+        
+        <h:outputStylesheet name="css/layout.css" library="serenity-layout" />
+    </h:body>
+
+</html>

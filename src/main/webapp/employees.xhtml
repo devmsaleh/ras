@@ -1,0 +1,161 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">إدارة مسؤولي النظام</ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                
+                
+				
+				<p:remoteCommand name="hideUserTab" partialSubmit="true" immediate="true" action="#{userManagementBean.hideUserTab()}"  update=":form:employeePanel"/>
+                
+				<p:commandButton partialSubmit="true" id="addNewEmployeeButton" action="#{userManagementBean.addNewEmployeeButtonClicked}" immediate="true" update=":form:employeePanel"  value="إضافة موظف" icon="fa fa-plus" style="margin-top:10px;margin-bottom:10px;" />
+				<p:importEnum type="com.charity.enums.UserTypeEnum" var="userTypeEnum" allSuffix="ALL_ENUM_VALUES" /> 
+				<p:importEnum type="com.charity.enums.BranchPermissionTypeEnum" var="branchPermissionTypeEnum" allSuffix="ALL_ENUM_VALUES" /> 
+				
+				<p:outputPanel  id="employeePanel">
+	                <p:panel rendered="#{userManagementBean.renderUserTab}" styleClass="card customInputs" >
+	
+			            <h1>
+			              <h:outputText rendered="#{!userManagementBean.editMode}" value="إضافة موظف"/>
+			              <h:outputText rendered="#{userManagementBean.editMode}" value="تحديث بيانات الموظف : #{userManagementBean.user.displayName}"/>
+			            </h1>
+			            
+			            
+			            
+			            <p:growl id="growl"  life="3000" />
+			            
+					            <p:panelGrid columns="4" styleClass="ui-noborder">
+					               
+					               <p:outputLabel value="اسم الموظف" />
+					               <p:inputText id="employeeName" onfocus="this.setSelectionRange(this.value.length,this.value.length);"  value="#{userManagementBean.user.displayName}" required="true" requiredMessage="يرجى ادخال اسم الموظف"/>
+					               
+					               <p:outputLabel value="فعال" />
+					               <p:selectBooleanCheckbox value="#{userManagementBean.user.enabled}" />
+			            
+					               <p:outputLabel value="اسم المستخدم" />
+					               <p:inputText  value="#{userManagementBean.user.userName}" required="true" requiredMessage="يرجى ادخال اسم المستخدم"/>
+					            
+					               <p:outputLabel value="كلمة المرور" />
+					               <p:inputText  value="#{userManagementBean.user.passwordDisplay}" required="true" requiredMessage="يرجى ادخال كلمة المرور"/>
+					            	
+					               <p:outputLabel value="الإمارة" />
+							       <p:selectOneMenu 
+										value="#{userManagementBean.user.emarah}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.emarahList}"
+											var="emarah" itemLabel="#{emarah.nameArabic}"
+											itemValue="#{emarah}" />
+										<p:ajax listener="#{userManagementBean.emarahChanged}"
+											update="cityMenu branchMenu" />
+									</p:selectOneMenu>
+					            					               
+							       <p:outputLabel value="المدينة" />
+							       <p:selectOneMenu id="cityMenu" 
+										value="#{userManagementBean.user.city}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.citiesList}"
+											var="city" itemLabel="#{city.nameArabic}"
+											itemValue="#{city}" />
+										<p:ajax listener="#{userManagementBean.cityChanged}"
+											update="branchMenu" />
+									</p:selectOneMenu>
+									
+								   <p:outputLabel value="الفرع" />
+							       <p:selectOneMenu id="branchMenu"
+							            required="true"
+							            requiredMessage="يرجى اختيار الفرع" 
+										value="#{userManagementBean.user.branch}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.branchesList}"
+											var="branch" itemLabel="#{branch.nameArabic}"
+											itemValue="#{branch}" />
+									</p:selectOneMenu>
+									
+
+																        								
+					            </p:panelGrid>
+					            
+					            <p:selectOneRadio  style="margin-right: 9.1em; margin-top: 0.5em;" value="#{userManagementBean.user.branchPermissionType}">
+							            <f:selectItem itemLabel="فرع واحد فقط" itemValue="#{branchPermissionTypeEnum.ONE_BRANCH}" />
+							            <f:selectItem itemLabel="جميع الفروع" itemValue="#{branchPermissionTypeEnum.ALL_BRANCHES}" />							            
+							    </p:selectOneRadio>
+					            
+					            
+					            <p:fieldset rendered="#{userManagementBean.user.type != userTypeEnum.ADMIN}" legend="الصلاحيات" style="width:80%">
+
+								   <p:selectManyCheckbox  value="#{userManagementBean.selectedRolesList}" layout="responsive" columns="4">
+							          <f:selectItems value="#{userManagementBean.roleCategoriesItemsList}" var="role" itemLabel="#{role.description}" itemValue="#{role}" />
+							       </p:selectManyCheckbox>
+							       
+							       
+					            </p:fieldset>
+					            
+					            
+					            
+					      
+					    
+					    <p:commandButton update="employeePanel usersTableContainer" value="حفظ" action="#{userManagementBean.createOrUpdateUser}" style="margin-top:10px" icon="fa fa-save" />
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                <h:panelGroup id="usersTableContainer" layout="block" styleClass="card">
+	                <h1>إدارة مسؤولي النظام</h1>
+	                <p:dataTable var="user"
+	                emptyMessage="لا يوجد موظفين" 
+	                dir="rtl"
+	                widgetVar="employeesTable"
+	                paginator="#{userManagementBean.employeesList.size() > 5}"
+	                paginatorTemplate="{PageLinks}"
+	                rows="5"
+	                sortMode="multiple"
+	                filteredValue="#{userManagementBean.filteredEmployeesList}"
+	                value="#{userManagementBean.employeesList}">
+					    
+					    <p:column headerText="الإسم" filterBy="#{user.displayName}" sortBy="#{user.displayName}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{user.displayName}" />
+					    </p:column>
+					 
+					    <p:column headerText="الصلاحية" filterBy="#{user.typeDisplay}" sortBy="#{user.typeDisplay}" filterMatchMode="exact" style="text-align:center">
+					        <h:outputText value="#{user.typeDisplay}" />
+					    </p:column>
+					    
+					    <p:column headerText="الفرع"  filterBy="#{user.branch.nameArabic}" sortBy="#{user.branch.nameArabic}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{user.branch.nameArabic}" rendered="#{user.branchPermissionType != branchPermissionTypeEnum.ALL_BRANCHES}"/>
+					        <h:outputText value="جميع الفروع" rendered="#{user.branchPermissionType == branchPermissionTypeEnum.ALL_BRANCHES}"/>
+					    </p:column>
+					    
+					    <p:column headerText="تاريخ آخر تعديل" filterBy="#{user.dateLastModified}" sortBy="#{user.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+							   <h:outputText value="#{userManagementBean.formatDateTime(user.dateLastModified)}" />
+						</p:column>
+						
+						<p:column headerText="آخر تعديل بواسطة" filterBy="#{user.lastModifier.displayName}" sortBy="#{user.lastModifier.displayName}" filterMatchMode="contains" style="text-align:center">
+							   <h:outputText value="#{user.lastModifier.displayName}" rendered="#{user.lastModifier != null}"/>
+						</p:column>
+					    
+					    <p:column headerText="" width="100" style="text-align:center;">
+					        <p:commandButton onclick="hideUserTab();"  immediate="true"  action="#{userManagementBean.setSelectedUser(user)}"  update=":form:employeePanel"  icon="ui-icon-pencil"  />
+					    </p:column>
+					    
+					</p:dataTable>
+				</h:panelGroup>
+            </div>
+            
+            
+        </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

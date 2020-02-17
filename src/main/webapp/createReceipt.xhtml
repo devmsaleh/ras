@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="title">انشاء سند يدوي</ui:define>
+    
+    <ui:define name="head">
+       <script type="text/javascript">    
+		    PrimeFaces.locales['ar'] = {
+		        closeText: 'إغلاق',
+		        prevText: 'السابق',
+		        nextText: 'التالي',
+		        monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+		        monthNamesShort: ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر' ],
+		        dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesShort: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesMin: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء ', 'الخميس', 'الجمعة ', 'السبت'],
+		        weekHeader: 'الاسبوع',
+		        FirstDay: 1,
+		        isRTL: false,
+		        showMonthAfterYear: false,
+		        yearSuffix: '',
+		        timeOnlyTitle: 'الوقت فقط',
+		        timeText: 'الوقت',
+		        hourText: 'ساعة',
+		        minuteText: 'دقيقة',
+		        secondText: 'ثانية',
+		        currentText: 'تاريخ اليوم',
+		        ampm: false,
+		        month: 'شهر',
+		        week: 'اسبوع',
+		        day: 'يوم',
+		        allDayText: 'طوال اليوم'
+		    };
+		</script>
+    </ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <p:growl id="growl" life="300000">
+          <p:autoUpdate  />
+        </p:growl>
+        <div class="ui-g">
+            <div class="ui-g-12">
+
+	                <p:panel id="mainPanel" styleClass="card customInputs">
+	
+			            <h1>انشاء سند يدوي</h1>
+			            
+			            <p:focus for="receiptId"/>
+			            <p:panelGrid columns="4" styleClass="ui-noborder">
+			               
+			               <p:outputLabel rendered="#{receiptBean.receipt.id != null}" value="رقم السند" />
+			               <p:outputLabel rendered="#{receiptBean.receipt.id != null}" value="#{receiptBean.receipt.id}" />
+			               <p:spacer rendered="#{receiptBean.receipt.id != null}"/>
+			               <p:spacer rendered="#{receiptBean.receipt.id != null}"/>
+			               
+			               
+			               <p:outputLabel value="رقم الإيصال اليدوي" />
+			               <p:inputText id="receiptId" disabled="#{receiptBean.receipt.id != null}" maxlength="15" value="#{receiptBean.receipt.manualReceiptNumber}" required="true" requiredMessage="يرجى ادخال رقم الإيصال اليدوي">
+			                 <p:keyFilter mask="pint" />
+			               </p:inputText>
+			               
+			               <p:spacer />
+			               <p:spacer />
+			               <p:outputLabel value="رقم الدفتر" rendered="false"/>
+			               <p:inputText rendered="false" disabled="#{receiptBean.receipt.id != null}" maxlength="15" value="#{receiptBean.receipt.manualReceiptBookNumber}" required="true" requiredMessage="يرجى ادخال رقم الدفتر">
+			                 <p:keyFilter mask="pint" />
+			               </p:inputText>
+			               
+			               <p:outputLabel value="تاريخ الإيصال اليدوي" />
+			               <p:calendar disabled="#{receiptBean.receipt.id != null}" required="true" requiredMessage="يرجى ادخال تاريخ الإيصال اليدوي" locale="ar" navigator="true" pattern="yyyy/MM/dd" maxdate="#{receiptBean.maxDate}" value="#{receiptBean.receipt.manualReceiptDate}" />
+
+					       <p:outputLabel value="اسم المندوب" />
+					       <p:selectOneMenu disabled="#{receiptBean.receipt.id != null}" 
+								value="#{receiptBean.delegate}"
+								converter="omnifaces.SelectItemsConverter"
+								required="true"
+								requiredMessage="يرجى اختيار المندوب"
+								filter="true" filterMatchMode="contains">									
+								<f:selectItem itemLabel="اختر المندوب" itemValue="#{null}" noSelectionOption="true"/>	
+								<f:selectItems value="#{receiptBean.delegatesList}"
+									var="user" itemLabel="#{user.displayName}"
+									itemValue="#{user}" />
+									<p:ajax />
+							</p:selectOneMenu>
+							
+						    <p:outputLabel value="رقم جوال المتبرع" />
+						    <p:autoComplete disabled="#{receiptBean.receipt.id != null}"  style="min-width:164px !important;" id="benefactorMobile" minQueryLength="3" maxResults="10" value="#{receiptBean.benefactor}" completeMethod="#{receiptBean.completeBenefactorByMobile}"
+                            var="user" itemLabel="#{user.displayNameAutoComplete}" itemValue="#{user}">
+                               <o:converter converterId="omnifaces.ListConverter" list="#{receiptBean.benefactorsList}"/>
+                               <p:ajax event="itemSelect" listener="#{receiptBean.onBenefactorMobileSelect}" update="benefactorMobile benefactorName" />
+                            </p:autoComplete>
+                            
+                            <p:outputLabel value="اسم المتبرع" />
+						    <p:autoComplete disabled="#{receiptBean.receipt.id != null}" id="benefactorName" minQueryLength="3" maxResults="10" value="#{receiptBean.benefactor}" completeMethod="#{receiptBean.completeBenefactorByName}"
+                            var="user" itemLabel="#{user.displayName}" itemValue="#{user}">
+                               <o:converter converterId="omnifaces.ListConverter" list="#{receiptBean.benefactorsList}"/>
+                               <p:ajax event="itemSelect" listener="#{receiptBean.onBenefactorMobileSelect}" update="benefactorMobile benefactorName" />
+                            </p:autoComplete>
+							
+			            </p:panelGrid>
+					            
+					    
+	                    
+	                </p:panel>
+	                
+	                <p:panel id="detailsPanel" styleClass="card customInputs">
+	
+			            <h1>الكوبونات</h1>
+			            
+			            
+			               
+		               <p:dataGrid  var="coupon" value="#{receiptBean.couponsList}" columns="4" layout="grid">				         
+					        <f:facet name="header">
+					            
+					        </f:facet>
+					 
+					        <p:commandLink immediate="true" process="@this" partialSubmit="true" action="#{receiptBean.addReceiptDetail(coupon)}" update=":form:receiptDetailsTableContainer">
+					           <p:graphicImage cache="false" width="200" height="120" value="/imageServlet?id=#{coupon.id}" />
+					        </p:commandLink>
+					        
+					    </p:dataGrid>
+							
+			            
+			            <p:panel id="receiptDetailsTableContainer">
+			            
+				            <p:dataTable var="receiptDetail"
+			                emptyMessage="لا يوجد كوبونات" 
+			                style="width:50%"
+			                dir="rtl"
+			                id="receiptDetailsTable"
+			                widgetVar="receiptDetailsTable"
+			                rendered="#{receiptBean.receipt.receiptDetailsList.size() > 0}"
+			                paginator="#{receiptBean.receipt.receiptDetailsList.size() > 5}"
+			                paginatorTemplate="{PageLinks}"
+			                rows="5"
+			                rowIndexVar="index"
+			                value="#{receiptBean.receipt.receiptDetailsList}">
+							    
+							   <p:column headerText="إسم الكوبون" style="text-align:center">
+							        <h:outputText value="#{receiptDetail.name}" />
+							   </p:column>
+							 
+							   <p:column headerText="القيمة" width="100" style="text-align:center">
+							        <p:inputNumber required="true"  requiredMessage="يجب ادخال قيمة التبرع" styleClass="centerText" value="#{receiptDetail.amount}"  maxValue="999999999" padControl="false" thousandSeparator="">
+							           <p:ajax process="@this" partialSubmit="true" event="change" update=":form:receiptDetailsTable :form:growl" listener="#{receiptBean.receiptDetailChanged(receiptDetail)}" />
+							        </p:inputNumber>
+							    </p:column>
+							    						    
+							    <p:column rendered="#{receiptBean.receipt.id == null}" headerText="" width="100" style="text-align:center;">
+							       <p:commandButton partialSubmit="true" process="@this"  immediate="true"  action="#{receiptBean.removeReceiptDetail(index)}"  update="form"  icon="ui-icon-close"  />
+							    </p:column>
+							    
+							    <f:facet name="footer">
+							        الإجمالي : #{receiptBean.receipt.totalAmount}
+							    </f:facet>
+							    
+							</p:dataTable>
+							
+						</p:panel>
+						
+			        </p:panel>
+			        
+			        <p:defaultCommand target="createReceipt" />
+			        <p:commandButton id="createReceipt" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();" rendered="#{receiptBean.receipt.id == null}" process="@this mainPanel" update="form" value="انشاء السند" action="#{receiptBean.createReceipt}" style="margin-top:10px" icon="fa fa-save" />
+                    
+                    
+            </div>
+            
+            
+        </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

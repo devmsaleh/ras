@@ -1,0 +1,348 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">إدارة المناديب</ui:define>
+
+    <ui:define name="head">
+       <script type="text/javascript">    
+		    PrimeFaces.locales['ar'] = {
+		        closeText: 'إغلاق',
+		        prevText: 'السابق',
+		        nextText: 'التالي',
+		        monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+		        monthNamesShort: ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر' ],
+		        dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesShort: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesMin: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء ', 'الخميس', 'الجمعة ', 'السبت'],
+		        weekHeader: 'الاسبوع',
+		        FirstDay: 1,
+		        isRTL: false,
+		        showMonthAfterYear: false,
+		        yearSuffix: '',
+		        timeOnlyTitle: 'الوقت فقط',
+		        timeText: 'الوقت',
+		        hourText: 'ساعة',
+		        minuteText: 'دقيقة',
+		        secondText: 'ثانية',
+		        currentText: 'تاريخ اليوم',
+		        ampm: false,
+		        month: 'شهر',
+		        week: 'اسبوع',
+		        day: 'يوم',
+		        allDayText: 'طوال اليوم'
+		    };
+		</script>
+    </ui:define>
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g">
+            <div class="ui-g-12">
+            
+                
+				
+				
+                
+				<p:commandButton partialSubmit="true" id="addNewDelegateButton" action="#{userManagementBean.addNewDelegateButtonClicked}" immediate="true" update=":form:delegatePanel" oncomplete="PF('tabsWidget').select(0);" value="إضافة مندوب" icon="fa fa-plus" style="margin-top:10px;margin-bottom:10px;" />
+				<p:importEnum type="com.charity.enums.ContractTypeEnum" var="contractTypeEnum" allSuffix="ALL_ENUM_VALUES" /> 
+				
+				<p:outputPanel id="delegatePanel">
+	                <p:panel rendered="#{userManagementBean.renderUserTab}" styleClass="card customInputs" >
+	
+			            <h1>
+			              <h:outputText rendered="#{!userManagementBean.editMode}" value="إضافة مندوب"/>
+			              <h:outputText rendered="#{userManagementBean.editMode}" value="تحديث بيانات المندوب : #{userManagementBean.user.displayName}"/>
+			            </h1>
+			            
+			            <p:commandButton style="display:none" id="tabChangeButton" action="#{userManagementBean.tabChange}"/>
+			            
+			            <p:growl id="growl" showDetail="true" life="3000" />
+			            <p:tabView activeIndex="#{userManagementBean.activeTab}" widgetVar="tabsWidget" cache="false" dynamic="true" id="tabs">			        
+					        <p:ajax event="tabChange"  onstart="document.getElementById('form:tabChangeButton').click();" />
+					        <p:tab id="tab1" title="تفاصيل المندوب">
+					            <p:panelGrid columns="4" styleClass="ui-noborder">
+					               <p:outputLabel value="اسم المندوب" />
+					               <p:inputText id="delegateName" onfocus="this.setSelectionRange(this.value.length,this.value.length);"  value="#{userManagementBean.user.displayName}" required="true" requiredMessage="يرجى ادخال اسم المندوب"/>
+					               <p:outputLabel value="فعال" />
+					               <p:selectBooleanCheckbox value="#{userManagementBean.user.enabled}" />
+					            
+					               <p:outputLabel value="نوع المندوب" />
+					               <p:selectOneRadio  value="#{userManagementBean.user.contractType}">
+							            <f:selectItem itemLabel="دائم" itemValue="#{contractTypeEnum.PERMANENT}" />
+							            <f:selectItem itemLabel="مؤقت" itemValue="#{contractTypeEnum.TEMPORARY}" />
+							       </p:selectOneRadio>
+							       <p:spacer />
+							       <p:spacer />
+							       
+							       <p:outputLabel value="ترتيب المندوب" />
+							       <p:inputNumber value="#{userManagementBean.user.userOrder}" maxValue="99999" padControl="false" thousandSeparator=""/>
+							       <p:spacer />
+							       <p:spacer />
+							       
+							       <p:outputLabel value="بداية التعامل" />
+							       <p:calendar required="true" requiredMessage="يرجى ادخال تاريخ بداية التعامل" locale="ar" navigator="true" pattern="yyyy/MM/dd" mindate="#{userManagementBean.minDate}" value="#{userManagementBean.user.startDate}" />
+							       
+							       <p:outputLabel value="نهاية التعامل" />
+							       <p:calendar locale="ar" navigator="true" pattern="yyyy/MM/dd" mindate="#{userManagementBean.minDate}"  value="#{userManagementBean.user.endDate}" />
+							       
+							       <p:outputLabel value="الإمارة" />
+							       <p:selectOneMenu id="emarahMenu" 
+										value="#{userManagementBean.user.emarah}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.emarahList}"
+											var="emarah" itemLabel="#{emarah.nameArabic}"
+											itemValue="#{emarah}" />
+										<p:ajax listener="#{userManagementBean.emarahChanged}"
+											update="cityMenu branchMenu regionMenu locationMenu" />
+									</p:selectOneMenu>
+								    <p:spacer />
+							        <p:spacer />
+							       
+							       <p:outputLabel value="المدينة" />
+							       <p:selectOneMenu id="cityMenu" 
+										value="#{userManagementBean.user.city}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.citiesList}"
+											var="city" itemLabel="#{city.nameArabic}"
+											itemValue="#{city}" />
+										<p:ajax listener="#{userManagementBean.cityChanged}"
+											update="branchMenu regionMenu locationMenu" />
+									</p:selectOneMenu>
+									
+								   <p:outputLabel value="الفرع" />
+							       <p:selectOneMenu id="branchMenu"
+							            required="true"
+							            requiredMessage="يرجى اختيار الفرع" 
+										value="#{userManagementBean.user.branch}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.branchesList}"
+											var="branch" itemLabel="#{branch.nameArabic}"
+											itemValue="#{branch}" />
+									</p:selectOneMenu>
+									
+								   <p:outputLabel value="المنطقة" />
+							       <p:selectOneMenu id="regionMenu" 
+										value="#{userManagementBean.user.region}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.regionsList}"
+											var="region" itemLabel="#{region.nameArabic}"
+											itemValue="#{region}" />
+										<p:ajax listener="#{userManagementBean.regionChanged}"
+											update="locationMenu" />
+									</p:selectOneMenu>
+									
+									<p:outputLabel value="الموقع" />
+							       <p:selectOneMenu id="locationMenu" 
+										value="#{userManagementBean.user.location}"
+										converter="omnifaces.SelectItemsConverter"
+										filter="true" filterMatchMode="contains">									
+										<f:selectItems value="#{userManagementBean.locationsList}"
+											var="location" itemLabel="#{location.nameArabic}"
+											itemValue="#{location}" />
+									</p:selectOneMenu>
+							       
+					            </p:panelGrid>
+					            
+					            
+					        </p:tab>
+					        <p:tab id="tab2" title="بيانات الهوية">
+					             <p:panelGrid columns="4" styleClass="ui-noborder">
+					               
+					               <p:outputLabel value="رقم الهوية" />
+					               <p:inputText maxlength="20" value="#{userManagementBean.user.userDetails.identityNumber}">
+					                  <p:keyFilter mask="pint" />
+					               </p:inputText>
+	
+	                               <p:spacer />
+							       <p:spacer />
+							       
+	                               <p:outputLabel value="رقم الجواز" />
+					               <p:inputText  value="#{userManagementBean.user.userDetails.passportNumber}" />
+					            
+					               <p:outputLabel value="تاريخ انتهاء جواز السفر" />
+					               <p:calendar locale="ar" navigator="true" pattern="yyyy/MM/dd" mindate="#{userManagementBean.minDate}" value="#{userManagementBean.user.userDetails.passportExpiryDate}" />
+					               
+					               <p:outputLabel value="رقم الإفامة" />
+					               <p:inputText  maxlength="20"   value="#{userManagementBean.user.userDetails.iqamaNumber}" >
+					                  <p:keyFilter mask="pint" />
+					               </p:inputText>
+					            
+					               <p:outputLabel value="تاريخ انتهاء الإقامة" />
+					               <p:calendar locale="ar" navigator="true" pattern="yyyy/MM/dd" mindate="#{userManagementBean.minDate}" value="#{userManagementBean.user.userDetails.iqamahExpiryDate}" />
+					            
+					               <p:outputLabel value="اسم الكافل" />
+					               <p:inputText  value="#{userManagementBean.user.userDetails.sponsorName}" />
+					            
+					               <p:outputLabel value="البنك" />
+					               <p:inputText  value="#{userManagementBean.user.userDetails.bankName}" />
+					            
+					               <p:outputLabel value="رقم الحساب" />
+					               <p:inputText  value="#{userManagementBean.user.userDetails.accountNumber}" />
+					            
+					               <p:outputLabel value="الأيبان" />
+					               <p:inputText  value="#{userManagementBean.user.userDetails.iban}" />
+					            </p:panelGrid>
+					        </p:tab>
+					        <p:tab id="tab3" title="الصلاحيات">
+					             <p:panelGrid columns="2" styleClass="ui-noborder">
+					               <p:outputLabel value="اسم المستخدم" />
+					               <p:inputText  value="#{userManagementBean.user.userName}" required="true" requiredMessage="يرجى ادخال اسم المستخدم"/>
+					            
+					               <p:outputLabel value="كلمة المرور" />
+					               <p:inputText  value="#{userManagementBean.user.passwordDisplay}" required="true" requiredMessage="يرجى ادخال كلمة المرور"/>
+					            
+					               <p:outputLabel value="تاريخ الانتهاء" />
+					               <p:calendar locale="ar" navigator="true" pattern="yyyy/MM/dd" mindate="#{userManagementBean.minDate}"  value="#{userManagementBean.user.expiryDate}" />
+					            
+					               <p:outputLabel value="الأقصى للتحصيل" />
+					               <p:inputNumber validatorMessage="3"  value="#{userManagementBean.user.maxLimit}" maxValue="999999999" padControl="false" thousandSeparator=""/>
+					               
+					            </p:panelGrid>
+					        </p:tab>
+					            
+					        <p:tab id="tab4" title="العهدة">
+					            <p:panelGrid columns="4" styleClass="ui-noborder">
+					               
+					               <p:outputLabel value="نوع الجهاز" />
+					               <p:inputText maxlength="25" value="#{userManagementBean.user.custody.deviceType}" />
+					               
+					               <h:panelGrid columns="2">
+					                  <p:outputLabel value="رقم الجهاز" style="margin-left: 15px;"/>
+					                  <p:inputText maxlength="25" value="#{userManagementBean.user.custody.deviceNumber}" />
+					               </h:panelGrid>
+					               <p:spacer/>
+					               
+					               <p:outputLabel value="الرقم التسلسلي" />
+					               <p:inputText maxlength="30" value="#{userManagementBean.user.custody.serialNumber}" />
+					               
+					               <p:spacer />
+							       <p:spacer />
+					               
+					               <p:outputLabel value="رقم الشريحة" />
+					               <p:inputText maxlength="30" value="#{userManagementBean.user.custody.simNumber}">
+					                  <p:keyFilter mask="pint" />
+					               </p:inputText>
+					               
+					               <h:panelGrid columns="2">
+						               <p:outputLabel value="رقم الكارت" style="margin-left: 15px;"/>
+						               <p:inputText maxlength="30" value="#{userManagementBean.user.custody.cardNumber}">
+						                  <p:keyFilter mask="pint" />
+						               </p:inputText>
+					               </h:panelGrid>
+					               <p:spacer/>
+	
+	                               <p:outputLabel value="رقم دفتر القبض اليدوي" />
+					               <p:inputText maxlength="20" value="#{userManagementBean.user.custody.manualReceiptsBookNumber}">
+					                  <p:keyFilter mask="pint" />
+					               </p:inputText>
+					               
+					               <h:panelGrid columns="4">
+						               <p:outputLabel value="من" />
+						               <p:inputText maxlength="20" value="#{userManagementBean.user.custody.manualReceiptsBookNumberStart}">
+						                  <p:keyFilter mask="pint" />
+						               </p:inputText>
+						               
+						               <p:outputLabel value="إلى" />
+						               <p:inputText maxlength="20" value="#{userManagementBean.user.custody.manualReceiptsBookNumberEnd}">
+						                  <p:keyFilter mask="pint" />
+						               </p:inputText>
+					               </h:panelGrid>
+					               <p:spacer />
+					               
+					               <p:outputLabel value="رقم دفتر القبض الإلكتروني" />
+					               <p:inputText maxlength="20" value="#{userManagementBean.user.custody.electronicReceiptsBookNumber}">
+					                  <p:keyFilter mask="pint" />
+					               </p:inputText>
+					               
+					               <h:panelGrid columns="4">
+						               <p:outputLabel value="من" />
+						               <p:inputText maxlength="20" value="#{userManagementBean.user.custody.electronicReceiptsBookNumberStart}">
+						                  <p:keyFilter mask="pint" />
+						               </p:inputText>
+						               
+						               <p:outputLabel value="إلى" />
+						               <p:inputText maxlength="20" value="#{userManagementBean.user.custody.electronicReceiptsBookNumberEnd}">
+						                  <p:keyFilter mask="pint" />
+						               </p:inputText>
+					               </h:panelGrid>
+					               <p:spacer />
+					               
+					               <p:outputLabel value="ملاحظات أخرى" />
+					               <p:inputTextarea value="#{userManagementBean.user.custody.notes}" />
+					               
+							    </p:panelGrid>
+					        </p:tab>
+					        
+					    </p:tabView>
+					    
+					    <p:commandButton update="delegatePanel :form:delegatesTable usersTableContainer" value="حفظ" action="#{userManagementBean.createOrUpdateUser}" style="margin-top:10px" icon="fa fa-save" />
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                <h:panelGroup id="usersTableContainer" layout="block" styleClass="card">
+	                <h1>إدارة المناديب</h1>
+	                <p:dataTable var="user"
+	                emptyMessage="لا يوجد مناديب" 
+	                dir="rtl"
+	                id="delegatesTable"
+	                widgetVar="delegatesTable"
+	                paginator="#{userManagementBean.delegatesList.size() > 5}"
+	                paginatorTemplate="{PageLinks}"
+	                rows="5"
+	                sortMode="multiple"
+	                filteredValue="#{userManagementBean.filteredDelegatesList}"
+	                value="#{userManagementBean.delegatesList}">
+					    
+					    <p:column headerText="الإسم" filterBy="#{user.displayName}" sortBy="#{user.displayName}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{user.displayName}" />
+					    </p:column>
+					 
+					    <p:column headerText="الرقم" filterBy="#{user.id}" sortBy="#{user.id}" filterMatchMode="exact" style="text-align:center">
+					        <h:outputText value="#{user.id}" />
+					    </p:column>
+					    
+					    <p:column headerText="الترتيب"  filterBy="#{user.userOrder}" sortBy="#{user.userOrder}" filterMatchMode="exact" style="text-align:center">
+					        <h:outputText value="#{user.userOrder}" />
+					    </p:column>
+					    
+					    <p:column headerText="المنطقة"  filterBy="#{user.region.nameArabic}" sortBy="#{user.region.nameArabic}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{user.region.nameArabic}" />
+					    </p:column>
+					    
+					    <p:column headerText="الموقع"  filterBy="#{user.location.nameArabic}" sortBy="#{user.location.nameArabic}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{user.location.nameArabic}" />
+					    </p:column>
+					    
+					    <p:column headerText="تاريخ آخر تعديل" filterBy="#{user.dateLastModified}" sortBy="#{user.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+							   <h:outputText value="#{userManagementBean.formatDateTime(user.dateLastModified)}" />
+						</p:column>
+						
+						<p:column headerText="آخر تعديل بواسطة" filterBy="#{user.lastModifier.displayName}" sortBy="#{user.lastModifier.displayName}" filterMatchMode="contains" style="text-align:center">
+							   <h:outputText value="#{user.lastModifier.displayName}" rendered="#{user.lastModifier != null}"/>
+						</p:column>
+					    
+					    <p:column headerText="" width="100" style="text-align:center;">
+					        <p:commandButton immediate="true"  action="#{userManagementBean.setSelectedUser(user)}"  update=":form:delegatePanel" oncomplete="PF('tabsWidget').select(0);" icon="ui-icon-pencil"  />
+					    </p:column>
+					    
+					    
+					    
+					</p:dataTable>
+				</h:panelGroup>
+            </div>
+            
+            
+        </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

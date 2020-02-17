@@ -1,0 +1,311 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">استلام الأموال من المناديب</ui:define>
+    
+    <ui:define name="head">
+       <script type="text/javascript">    
+		    PrimeFaces.locales['ar'] = {
+		        closeText: 'إغلاق',
+		        prevText: 'السابق',
+		        nextText: 'التالي',
+		        monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+		        monthNamesShort: ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر' ],
+		        dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesShort: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesMin: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء ', 'الخميس', 'الجمعة ', 'السبت'],
+		        weekHeader: 'الاسبوع',
+		        FirstDay: 1,
+		        isRTL: false,
+		        showMonthAfterYear: false,
+		        yearSuffix: '',
+		        timeOnlyTitle: 'الوقت فقط',
+		        timeText: 'الوقت',
+		        hourText: 'ساعة',
+		        minuteText: 'دقيقة',
+		        secondText: 'ثانية',
+		        currentText: 'تاريخ اليوم',
+		        ampm: false,
+		        month: 'شهر',
+		        week: 'اسبوع',
+		        day: 'يوم',
+		        allDayText: 'طوال اليوم'
+		    };
+		    
+		    function printElement(elementId)
+		    {
+		    	var printContents = document.getElementById(elementId).innerHTML;
+		        var originalContents = document.body.innerHTML;
+
+		        document.getElementById('header').style.display = 'none';
+		        document.getElementById('footer').style.display = 'none';
+		        
+		        document.body.innerHTML = printContents;
+
+		        window.print();
+
+		        document.body.innerHTML = originalContents;
+		    }
+		    
+		    
+		</script>
+		
+		<style type="text/css">
+		    
+		</style>
+    </ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <p:growl id="growl" life="3000">
+          <p:autoUpdate  />
+        </p:growl>
+        <div class="ui-g">
+            <div class="ui-g-12">
+            
+               <div class="card">
+                   <h1>استلام الأموال من المناديب</h1>
+                   <p:panelGrid id="inputsTable" columns="3" styleClass="ui-noborder">
+		               <p:outputLabel value="اسم المندوب" />
+				       <p:selectOneMenu
+							value="#{collectionBean.delegate}"
+							converter="omnifaces.SelectItemsConverter"
+							required="true"
+							requiredMessage="يرجى اختيار المندوب"
+							filter="true" filterMatchMode="contains">									
+							<f:selectItem itemLabel="اختر المندوب" itemValue="#{null}" noSelectionOption="true"/>	
+							<f:selectItems value="#{collectionBean.delegatesList}"
+								var="user" itemLabel="#{user.displayName}"
+								itemValue="#{user}" />
+							<p:ajax />	
+						</p:selectOneMenu>
+						<p:commandButton value="عرض" onstart="PF('blockDialog').show();" oncomplete="PF('blockDialog').hide();" action="#{collectionBean.findNotCollectedReceipts}" update=":form:receiptsTableContainer :form:delegateSummary"/>
+                    </p:panelGrid>
+                    <h:panelGroup layout="block" id="delegateSummary" style="margin-top:15px">
+                       <p:panelGrid rendered="#{collectionBean.collectionDTO.receiptsList.size() > 0}">
+                           <p:row>
+                              <p:column styleClass="headerColumn">
+                                 المجموع الكلي
+                              </p:column>
+                              <p:column>
+                                 #{collectionBean.collectionDTO.totalAmount}
+                              </p:column>
+                              
+                              <p:column styleClass="headerColumn">
+                                 عدد الإيصالات الغير محصلة
+                              </p:column>
+                              <p:column>
+                                 #{collectionBean.collectionDTO.receiptsList.size()}
+                              </p:column>
+                           </p:row>
+                           
+                           <p:row>
+                              <p:column styleClass="headerColumn">
+                                 إجمالي النقدي
+                              </p:column>
+                              <p:column>
+                                  #{collectionBean.collectionDTO.cashAmount}
+                              </p:column>
+                              
+                              <p:column styleClass="headerColumn">
+                                 إجمالي الشيكات
+                              </p:column>
+                              <p:column>
+                                 #{collectionBean.collectionDTO.chequeAmount}
+                              </p:column>
+
+                           </p:row>
+                           
+                           <p:row>                             
+                              <p:column styleClass="headerColumn">
+                                 إجمالي بطاقة الائتمان
+                              </p:column>
+                              <p:column>
+                                 #{collectionBean.collectionDTO.creditCardAmount}
+                              </p:column>
+                              
+                              <p:column styleClass="headerColumn">
+                                 إجمالي التحويل البنكي
+                              </p:column>
+                              <p:column>
+                                 #{collectionBean.collectionDTO.bankTransferAmount}
+                              </p:column>
+                           </p:row>
+                                                    
+                       </p:panelGrid>
+                    </h:panelGroup>
+                    
+                </div>
+                
+                <h:panelGroup id="receiptsTableContainer">
+                
+	                <h:panelGroup rendered="#{collectionBean.renderResultDiv}" layout="block" styleClass="card">
+		                
+		                <h1>تفاصيل التحصيل</h1>	                
+		                <p:outputLabel rendered="#{collectionBean.collectionDTO.receiptsList.size() == 0}" value="لا يوجد ايصالات غير محصلة لدى المندوب"/>
+		                
+		                <p:outputLabel style="margin-left:10px;" value="تحديد كل الصفحات" rendered="false"/>
+		                <p:selectBooleanCheckbox onchange="if(this.checked){PF('receiptsTableWidget').selectAllRows();}else{PF('receiptsTableWidget').unselectAllRows();}" rendered="false"/>
+		                
+		                <p:dataTable var="receipt" style="margin-bottom:15px;margin-top:10px;"
+		                dir="rtl" 
+		                rowKey="#{receipt.id}"
+                        rowIndexVar="indexVar" 
+		                widgetVar="receiptsTableWidget"
+		                rendered="#{collectionBean.collectionDTO.receiptsList.size() > 0}"
+		                value="#{collectionBean.collectionDTO.receiptsList}">
+						    						    
+						    <p:column style="width:16px">
+					            <p:rowToggler />
+					        </p:column>
+					        
+						    <p:column headerText="م" style="width:16px;text-align:center">
+						        <h:outputText value="#{indexVar+1}" />
+						    </p:column>
+						    
+						    <p:column headerText="طريقة الدفع" style="text-align:center">
+						        <h:outputText value="#{receipt.paymentType.label}" />
+						    </p:column>
+						 
+						    <p:column headerText="رقم الإيصال" style="text-align:center">
+						        <h:outputText value="#{receipt.id}" />
+						    </p:column>
+						    
+						    <p:column headerText="تاريخ الإيصال" style="text-align:center">
+						        <h:outputText value="#{receipt.receiptDateFormatted}" />
+						    </p:column>
+						    
+						    <p:column headerText="الصافي" style="text-align:center">
+						        <h:outputText value="#{receipt.totalAmount}" />
+						    </p:column>
+						    
+						    <p:rowExpansion>
+					            <p:dataTable style="float:right" styleClass="ui-g-6" var="receiptDetail"  rowIndexVar="subIndexVar" value="#{receipt.receiptDetailsList}">
+							        <f:facet name="header">
+							            تفاصيل الإيصال
+							        </f:facet>
+							        
+							        <p:column headerText="م" style="width:16px;text-align:center">
+								        <h:outputText value="#{subIndexVar+1}" />
+								    </p:column>
+								    
+								    <p:column headerText="اسم الكوبون" style="text-align:center">
+								        <h:outputText value="#{receiptDetail.couponName}" />
+								    </p:column>
+								    
+							        <p:column headerText="المبلغ" style="text-align:center">
+								        <h:outputText value="#{receiptDetail.amount}" />
+								    </p:column>
+								    
+                                </p:dataTable>
+					        </p:rowExpansion>
+						    
+						    
+						</p:dataTable>
+						
+						<p:commandButton onstart="PF('blockDialog').show();" 
+						oncomplete="PF('blockDialog').hide();if(!args.validationFailed){PF('reportDialog').show();}" 
+						style="margin-left:15px;" 
+						action="#{collectionBean.collect}" 
+						update=":form:receiptsTableContainer :form:delegateSummary :form:inputsTable :form:reportDialog" value="تحصيل" rendered="#{collectionBean.collectionDTO.receiptsList.size() > 0}"/>
+						
+						
+					</h:panelGroup>
+				
+				</h:panelGroup>
+				
+				
+            </div>                       
+        </div>
+        
+        <p:dialog onShow="PF('reportDialog').toggleMaximize();" onHide="PF('reportDialog').toggleMaximize(); " styleClass="reportDialog" resizable="true" dir="rtl" closeOnEscape="true"  id="reportDialog"  header="طباعة سند تحصيل إجمالي" widgetVar="reportDialog" style="margin-top:70px;" width="900" height="500" >
+		  
+		      <p:commandButton value="طباعة"  type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                <p:printer target="printDiv" /> 
+              </p:commandButton>
+		      <h:panelGroup layout="block" id="printDiv" styleClass="printDiv" style="direction:rtl;width:99%;">			      
+				  
+				  
+				  <h:panelGrid styleClass="printHeader" columns="3" id="header" style="width:95%;margin-right:0%;" columnClasses="headerCol1,headerCol2,headerCol3">
+				      <h:panelGrid column="1" id="rightHeader" style="margin:auto; width:55%">
+				         <p:graphicImage name="images/logo-large.jpg" style="height:70px;width:230px;" library="serenity-layout" />
+				      </h:panelGrid>
+					  <h:panelGrid column="1" id="MiddleHeader" style="margin:auto; width:100%;text-align:center">					     
+				        <h:outputLabel style="font-size:20px;font-weight:normal" value="سند تحصيل إجمالي"/>
+				      </h:panelGrid>					  
+					  <h:panelGrid columns="1" id="leftHeader" style="margin:auto; width:100%;text-align:center">
+				         <h:outputLabel value="#{bundle.appName}" style="font-size:20px;font-weight:normal"/>
+						 <h:outputLabel value="#{collectionBean.nowDate}" style="font-size:20px;font-weight:normal"/>
+				      </h:panelGrid>
+				  </h:panelGrid>
+				  
+				  <h:panelGrid columns="4" style="margin: 0 auto;font-size:18px;margin-bottom:30px;">
+				      
+				      <p:outputLabel value="الحالة :" />
+				      <p:outputLabel value="مرحل" style="padding-right:10px;padding-left:200px;"/>
+				      
+				      <p:outputLabel value="اسم المندوب :" />
+				      <p:outputLabel value="#{collectionBean.collectionReportDTO.delegateName}" />
+				      
+				      <p:outputLabel value="رقم التحصيل :" />
+				      <p:outputLabel value="#{collectionBean.collectionReportDTO.collectionId}" />
+				      
+				      <p:outputLabel value="ملاحظات :" />
+				      <p:outputLabel value="" />
+				      
+				      <p:outputLabel value="تاريخ التحصيل :" />
+				      <p:outputLabel  value="#{collectionBean.todayDate}" />
+				      
+				  </h:panelGrid>
+				  
+				  <h:panelGroup layout="block" id="noCriteriaDiv" style="font-size:13pt;width:100%">
+					  <p:dataTable emptyMessage="" rowIndexVar="indexVar"  
+					  id="detailsTable" var="couponAmountDTO" 
+					  value="#{collectionBean.collectionReportDTO.couponsList}" >
+                            <p:column width="50" style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="م" />
+								</f:facet>
+								<h:outputText value="#{indexVar+1}" />
+						    </p:column>
+						    
+						    <p:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="نوع العملية" />
+								</f:facet>
+								<h:outputText value="#{couponAmountDTO.couponName}" />
+						    </p:column>
+						    
+						    <p:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="المبلغ" />
+								</f:facet>
+								<h:outputText value="#{couponAmountDTO.amount}" />
+						    </p:column>
+						    
+						    <f:facet name="footer">
+						        الإجمالي : #{collectionBean.collectionReportDTO.amount}
+						    </f:facet>
+						    
+					  </p:dataTable>
+				  </h:panelGroup>
+
+				  <h:panelGrid columns="2" style="margin: 0 auto;font-size:18px;margin-top:30px;">
+				      
+				      <p:outputLabel value="توقيع المندوب" style="padding-left:400px;"/>
+				      <p:outputLabel value="توقيع المحصل" />
+				      
+				  </h:panelGrid>
+			  </h:panelGroup>
+  		  	  
+		  </p:dialog>
+		  
+        </h:form>
+    </ui:define>
+
+</ui:composition>

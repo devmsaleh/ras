@@ -1,0 +1,353 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">إعدادات القوائم</ui:define>
+    
+     <ui:define name="head">
+     
+     <style type="text/css">
+         .ui-panel{
+            border:none !important; 
+         }
+         .ui-dialog-content{
+           padding:20px !important;
+         }
+         
+         .ui-datatable-header{
+            background-color: white !important;
+            color: black !important;
+            border: none !important;
+            font-size: 18px !important;
+         }
+         
+         .card h1{
+            margin: 0px 0  !important;
+         }
+         
+         body .ui-datatable tbody tr td{
+           padding: 3px 10px !important;
+         }   
+			 
+     </style>
+           
+   </ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g" dir="rtl">
+            <div class="ui-g-12">
+                
+             <p:growl id="growl"  life="3000" /> 	
+             <div class="card" >
+                    
+                <h1>إعدادات القوائم</h1>
+                
+                
+                <p:fieldset legend="الإمارات" style="margin-top:10px;">
+	                
+	                <div style="width:100%;">
+		                  <p:commandButton action="#{lookupBean.addNewEmarahButtonClicked}" 
+		                  style="margin-bottom:5px;"
+		                  title="إضافة" immediate="true"  update=":form:emarahDialog" 
+		                  oncomplete="PF('emarahDialog').show();" icon="ui-icon-plus" /> 
+		            </div>
+	                
+	                <p:dataTable var="emarah"
+		                emptyMessage="لا يوجد إمارات" 
+		                dir="rtl"
+		                id="emarahTable"
+		                paginator="#{lookupBean.emarahList.size() > 5}"
+		                paginatorTemplate="{PageLinks}"
+		                rows="5"
+		                sortMode="multiple"
+		                filteredValue="#{lookupBean.filteredEmarahList}"
+		                value="#{lookupBean.emarahList}">
+						    
+						    <p:column headerText="الإسم" filterBy="#{emarah.nameArabic}" sortBy="#{emarah.nameArabic}" filterMatchMode="contains" style="text-align:center">
+						        <h:outputText value="#{emarah.nameArabic}" />
+						    </p:column>
+	
+						    <p:column headerText="الحالة" filterBy="#{emarah.active}" sortBy="#{emarah.active}" filterMatchMode="exact" style="text-align:center">
+						        <h:outputText value="فعال" rendered="#{emarah.active}"/>
+						        <h:outputText value="غير فعال" rendered="#{!emarah.active}"/>
+						    </p:column>
+						    
+						    <p:column headerText="تاريخ التعديل" filterBy="#{emarah.dateLastModified}" sortBy="#{emarah.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+						        <h:outputText value="#{lookupBean.formatDateTime(emarah.dateLastModified)}" />
+						    </p:column>
+						    
+						    <p:column headerText="" width="100" style="text-align:center;">
+						        <p:commandButton title="تعديل" immediate="true"  update=":form:emarahDialog" oncomplete="PF('emarahDialog').show();" icon="ui-icon-pencil">
+						          <f:setPropertyActionListener target="#{lookupBean.emarah}" value="#{emarah}" />
+						        </p:commandButton>
+						        
+						         <p:commandButton title="عرض المدن" action="#{lookupBean.emarahChanged(emarah)}" 
+						        immediate="true"  
+						        update=":form:cityTableContainer :form:regionTableContainer" icon="ui-icon-info-outline" 
+						        onstart="PF('blockDialog').show();"
+		                        oncomplete="PF('blockDialog').hide();"/>
+		                        
+						    </p:column>
+						    
+						</p:dataTable>
+					
+					</p:fieldset>
+					
+					<p:panel id="cityTableContainer">
+						
+						<p:fieldset legend="مدن إمارة #{lookupBean.emarah.nameArabic}" style="margin-top:10px;" rendered="#{lookupBean.emarah != null and lookupBean.emarah.id != null}">				
+							
+							<div style="width:100%">
+							  <p:commandButton action="#{lookupBean.addNewCityButtonClicked}" 
+			                  style="margin-bottom:5px;"
+			                  title="إضافة" immediate="true"  update=":form:cityDialog" 
+			                  oncomplete="PF('cityDialog').show();" icon="ui-icon-plus" />
+							</div>
+							
+							<h:outputLabel style="font-size:18px;" value="لا يوجد مدن" rendered="#{lookupBean.cityList.size() == 0}"/>
+			                  
+							<p:dataTable var="city"
+							rendered="#{lookupBean.cityList.size() > 0}"
+			                emptyMessage="لا يوجد مدن" 
+			                dir="rtl"
+			                id="cityTable"
+			                paginator="#{lookupBean.cityList.size() > 5}"
+			                paginatorTemplate="{PageLinks}"
+			                rows="5"
+			                sortMode="multiple"
+			                filteredValue="#{lookupBean.filteredCityList}"
+			                value="#{lookupBean.cityList}">
+							    
+							    <p:column headerText="الإسم" filterBy="#{city.nameArabic}" sortBy="#{city.nameArabic}" filterMatchMode="contains" style="text-align:center">
+							        <h:outputText value="#{city.nameArabic}" />
+							    </p:column>
+		
+							    <p:column headerText="الحالة" filterBy="#{city.active}" sortBy="#{city.active}" filterMatchMode="exact" style="text-align:center">
+							        <h:outputText value="فعال" rendered="#{city.active}"/>
+							        <h:outputText value="غير فعال" rendered="#{!city.active}"/>
+							    </p:column>
+							    
+							    <p:column headerText="تاريخ التعديل" filterBy="#{city.dateLastModified}" sortBy="#{city.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+							        <h:outputText value="#{lookupBean.formatDateTime(city.dateLastModified)}" />
+							    </p:column>
+							    
+							    <p:column headerText="" width="100" style="text-align:center;">
+							        <p:commandButton title="تعديل" immediate="true"  update=":form:cityDialog" oncomplete="PF('cityDialog').show();" icon="ui-icon-pencil">
+							          <f:setPropertyActionListener target="#{lookupBean.city}" value="#{city}" />
+							        </p:commandButton>
+							        
+							        <p:commandButton title="عرض المناطق" immediate="true"  
+							        icon="ui-icon-info-outline" update=":form:regionTableContainer" 
+							        action="#{lookupBean.cityChanged(city)}" 
+							        onstart="PF('blockDialog').show();"
+			                        oncomplete="PF('blockDialog').hide();"/>
+			                        
+							    </p:column>
+							    
+							</p:dataTable>
+						
+						</p:fieldset>
+					
+					</p:panel>
+					
+					<p:panel id="regionTableContainer">
+						
+						<p:fieldset legend="مناطق مدينة #{lookupBean.city.nameArabic}" style="margin-top:10px;" rendered="#{lookupBean.city != null and lookupBean.city.id != null}">				
+							
+							<div style="width:100%">
+							  <p:commandButton action="#{lookupBean.addNewRegionButtonClicked}" 
+			                  style="margin-bottom:5px;"
+			                  title="إضافة" immediate="true"  update=":form:regionDialog" 
+			                  oncomplete="PF('regionDialog').show();" icon="ui-icon-plus" />
+							</div>
+							
+							<h:outputLabel style="font-size:18px;" value="لا يوجد مناطق" rendered="#{lookupBean.regionList.size() == 0}"/>
+			                  
+							<p:dataTable var="region"
+							rendered="#{lookupBean.regionList.size() > 0}"
+			                emptyMessage="لا يوجد مناطق" 
+			                dir="rtl"
+			                id="regionTable"
+			                paginator="#{lookupBean.regionList.size() > 5}"
+			                paginatorTemplate="{PageLinks}"
+			                rows="5"
+			                sortMode="multiple"
+			                filteredValue="#{lookupBean.filteredRegionList}"
+			                value="#{lookupBean.regionList}">
+							    
+							    <p:column headerText="الإسم" filterBy="#{region.nameArabic}" sortBy="#{region.nameArabic}" filterMatchMode="contains" style="text-align:center">
+							        <h:outputText value="#{region.nameArabic}" />
+							    </p:column>
+		
+							    <p:column headerText="الحالة" filterBy="#{region.active}" sortBy="#{region.active}" filterMatchMode="exact" style="text-align:center">
+							        <h:outputText value="فعال" rendered="#{region.active}"/>
+							        <h:outputText value="غير فعال" rendered="#{!region.active}"/>
+							    </p:column>
+							    
+							    <p:column headerText="تاريخ التعديل" filterBy="#{region.dateLastModified}" sortBy="#{region.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+							        <h:outputText value="#{lookupBean.formatDateTime(region.dateLastModified)}" />
+							    </p:column>
+							    
+							    <p:column headerText="" width="100" style="text-align:center;">
+							        <p:commandButton title="تعديل" immediate="true"  update=":form:regionDialog" oncomplete="PF('regionDialog').show();" icon="ui-icon-pencil">
+							          <f:setPropertyActionListener target="#{lookupBean.region}" value="#{region}" />
+							        </p:commandButton>
+							        
+							        <p:commandButton title="عرض المواقع" immediate="true"  
+							        icon="ui-icon-info-outline" 
+							        update=":form:locationTableContainer"
+							        action="#{lookupBean.regionChanged(region)}" 
+							        onstart="PF('blockDialog').show();"
+			                        oncomplete="PF('blockDialog').hide();"/>
+			                        
+							    </p:column>
+							    
+							</p:dataTable>
+						
+						</p:fieldset>
+					
+					</p:panel>
+					
+					<p:panel id="locationTableContainer">
+						
+						<p:fieldset legend="مواقع منطقة :  #{lookupBean.region.nameArabic}" style="margin-top:10px;" rendered="#{lookupBean.region != null and lookupBean.region.id != null}">				
+							
+							<div style="width:100%">
+							  <p:commandButton action="#{lookupBean.addNewLocationButtonClicked}" 
+			                  style="margin-bottom:5px;"
+			                  title="إضافة" immediate="true"  update=":form:locationDialog" 
+			                  oncomplete="PF('locationDialog').show();" icon="ui-icon-plus" />
+							</div>
+							
+							<h:outputLabel style="font-size:18px;" value="لا يوجد مواقع" rendered="#{lookupBean.locationList.size() == 0}"/>
+			                  
+							<p:dataTable var="location"
+							rendered="#{lookupBean.locationList.size() > 0}"
+			                emptyMessage="لا يوجد مواقع" 
+			                dir="rtl"
+			                id="locationTable"
+			                paginator="#{lookupBean.locationList.size() > 5}"
+			                paginatorTemplate="{PageLinks}"
+			                rows="5"
+			                sortMode="multiple"
+			                filteredValue="#{lookupBean.filteredLocationList}"
+			                value="#{lookupBean.locationList}">
+							    
+							    <p:column headerText="الإسم" filterBy="#{location.nameArabic}" sortBy="#{location.nameArabic}" filterMatchMode="contains" style="text-align:center">
+							        <h:outputText value="#{location.nameArabic}" />
+							    </p:column>
+		
+							    <p:column headerText="الحالة" filterBy="#{location.active}" sortBy="#{location.active}" filterMatchMode="exact" style="text-align:center">
+							        <h:outputText value="فعال" rendered="#{location.active}"/>
+							        <h:outputText value="غير فعال" rendered="#{!location.active}"/>
+							    </p:column>
+							    
+							    <p:column headerText="تاريخ التعديل" filterBy="#{location.dateLastModified}" sortBy="#{location.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+							        <h:outputText value="#{lookupBean.formatDateTime(location.dateLastModified)}" />
+							    </p:column>
+							    
+							    <p:column headerText="" width="100" style="text-align:center;">
+							        
+							        <p:commandButton title="تعديل" immediate="true"  update=":form:locationDialog" oncomplete="PF('locationDialog').show();" icon="ui-icon-pencil">
+							          <f:setPropertyActionListener target="#{lookupBean.location}" value="#{location}" />
+							        </p:commandButton>							        
+			                        
+							    </p:column>
+							    
+							</p:dataTable>
+						
+						</p:fieldset>
+					
+					</p:panel>
+        
+             </div>
+                
+                
+                
+            </div>
+            
+            
+        </div>
+        
+        <p:dialog dynamic="true"   header="#{lookupBean.emarah.id == null ? 'إضافة إمارة':'تعديل إمارة'}" id="emarahDialog" widgetVar="emarahDialog" modal="true">
+		     <p:panelGrid columns="2" styleClass="ui-noborder rtlTable">
+			             
+               <p:outputLabel  value="اسم الإمارة" />
+               <p:inputText onfocus="this.setSelectionRange(this.value.length,this.value.length);" value="#{lookupBean.emarah.nameArabic}"/>
+               
+               <p:outputLabel value="فعالة" />
+			   <p:selectBooleanCheckbox style="margin-right:34px !important" value="#{lookupBean.emarah.active}" />
+                          			            
+             </p:panelGrid>
+             
+             <p:commandButton update=":form:emarahTable" value="#{lookupBean.emarah.id == null ? 'إضافة':'تعديل'}" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();if(!args.validationFailed){PF('emarahDialog').hide();" 
+	                           action="#{lookupBean.createOrUpdateEmarah}" style="margin-top:10px;margin-right:13px;" icon="fa fa-save" />
+		</p:dialog>
+		
+		<p:dialog dynamic="true" header="#{lookupBean.city.id == null ? 'إضافة مدينة لإمارة':'تعديل مدينة'}" id="cityDialog" widgetVar="cityDialog" modal="true">
+		     <p:panelGrid columns="2" styleClass="ui-noborder rtlTable">
+			   
+			   <p:outputLabel  value="الإمارة: " />
+			   <p:outputLabel style="display: block;margin-right: 35px;"  value="#{lookupBean.emarah.nameArabic}" />
+			             
+               <p:outputLabel  value="اسم المدينة" />
+               <p:inputText onfocus="this.setSelectionRange(this.value.length,this.value.length);" value="#{lookupBean.city.nameArabic}"/>
+               
+               <p:outputLabel value="فعالة" />
+			   <p:selectBooleanCheckbox style="margin-right:34px !important" value="#{lookupBean.city.active}" />
+                          			            
+             </p:panelGrid>
+             
+             <p:commandButton update=":form:cityTableContainer" value="#{lookupBean.city.id == null ? 'إضافة':'تعديل'}" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();if(!args.validationFailed){PF('cityDialog').hide();" 
+	                           action="#{lookupBean.createOrUpdateCity}" style="margin-top:10px;margin-right:13px;" icon="fa fa-save" />
+		</p:dialog>
+		
+		<p:dialog dynamic="true" header="#{lookupBean.region.id == null ? 'إضافة منطقة لمدينة':'تعديل منطقة'}" id="regionDialog" widgetVar="regionDialog" modal="true">
+		     <p:panelGrid columns="2" styleClass="ui-noborder rtlTable">
+			   
+			   <p:outputLabel  value="المدينة: " />
+			   <p:outputLabel style="display: block;margin-right: 35px;"  value="#{lookupBean.city.nameArabic}" />
+			             
+               <p:outputLabel  value="اسم المنطقة" />
+               <p:inputText onfocus="this.setSelectionRange(this.value.length,this.value.length);" value="#{lookupBean.region.nameArabic}"/>
+               
+               <p:outputLabel value="فعالة" />
+			   <p:selectBooleanCheckbox style="margin-right:34px !important" value="#{lookupBean.region.active}" />
+                          			            
+             </p:panelGrid>
+             
+             <p:commandButton update=":form:regionTableContainer" value="#{lookupBean.region.id == null ? 'إضافة':'تعديل'}" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();if(!args.validationFailed){PF('regionDialog').hide();" 
+	                           action="#{lookupBean.createOrUpdateRegion}" style="margin-top:10px;margin-right:13px;" icon="fa fa-save" />
+		</p:dialog>
+		
+		<p:dialog dynamic="true" header="#{lookupBean.region.id == null ? 'إضافة موقع لمنطقة':'تعديل موقع'}" id="locationDialog" widgetVar="locationDialog" modal="true">
+		     <p:panelGrid columns="2" styleClass="ui-noborder rtlTable">
+			   
+			   <p:outputLabel  value="المنطقة: " />
+			   <p:outputLabel style="display: block;margin-right: 35px;"  value="#{lookupBean.region.nameArabic}" />
+			             
+               <p:outputLabel  value="اسم الموقع" />
+               <p:inputText onfocus="this.setSelectionRange(this.value.length,this.value.length);" value="#{lookupBean.location.nameArabic}"/>
+               
+               <p:outputLabel value="فعالة" />
+			   <p:selectBooleanCheckbox style="margin-right:34px !important" value="#{lookupBean.location.active}" />
+                          			            
+             </p:panelGrid>
+             
+             <p:commandButton update=":form:locationTableContainer" value="#{lookupBean.location.id == null ? 'إضافة':'تعديل'}" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();if(!args.validationFailed){PF('locationDialog').hide();" 
+	                           action="#{lookupBean.createOrUpdateLocation}" style="margin-top:10px;margin-right:13px;" icon="fa fa-save" />
+		</p:dialog> 
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

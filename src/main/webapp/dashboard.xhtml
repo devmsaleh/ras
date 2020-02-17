@@ -1,0 +1,222 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">الصفحة الرئيسية</ui:define>
+
+    <ui:define name="head">
+    
+    <script type="text/javascript">
+    function skinBar() {
+    	Chart.defaults.global.defaultFontFamily = 'GE SS Two Light, Arial, sans-serif';
+    	Chart.defaults.global.defaultFontSize = 12;
+    	
+    	Chart.defaults.bar.scales.xAxes[0].barThickness = 30;
+    	Chart.defaults.global.responsive = true;
+    	Chart.defaults.global.maintainAspectRatio = false;
+    	
+    }
+    
+    $(document).ready(function(){
+        $('.rowTogglerCustom .ui-row-toggler').attr("title", "تفاصيل السند");
+    });
+    </script>
+    
+     <style type="text/css">
+            .rowTogglerCustom .ui-row-toggler{
+               display: inline-block !important;
+               vertical-align:middle !important;
+               border-radius: 50% !important;
+			   width: 30px !important;
+			   height: 30px !important;
+			   background-color: #00A69C !important;
+               color: #ffffff !important;
+            }
+            
+            .rowTogglerCustom .ui-row-toggler:before {
+			    position: absolute !important;
+			    top: 15% !important;
+			    left: 15% !important;
+			    content: '\e88f' !important;
+			 }
+			 
+			 .delegatesBar{
+			    width:#{dashboardBean.delegatesBarWidth};
+			    height:#{dashboardBean.delegatesBarHeight};
+			    margin: 0 auto;
+			 }
+			 
+			 
+			 .couponsBar{
+			    width:#{dashboardBean.couponsBarWidth};
+			    height:#{dashboardBean.couponsBarHeight};
+			    margin: 0 auto;
+			 }
+			 
+    </style>
+           
+   </ui:define>
+
+    <ui:define name="content">
+        <div class="ui-g dashboard">
+            <p:importEnum type="com.charity.enums.RoleTypeEnum" var="roleTypeEnum" allSuffix="ALL_ENUM_VALUES" />
+            <div style="width:100%;text-align:center">
+              <span style="font-size:17px;color:#797979;font-weight:600">احصائيات آخر 30 يوم</span>
+            </div>
+            <div id="widgets" style="width:100%">
+	            <div class="ui-g-12 ui-md-3">
+	                <div class="overview-box overview-box-1">
+	                    <div class="overview-box-header"></div>
+	                    <div class="overview-box-content">
+	                        <div class="overview-box-icon"><i class="material-icons">&#xE156;</i></div>
+	                        <div class="overview-box-title">المبالغ الغير محصلة</div>
+	                        <div class="overview-box-count">#{dashboardBean.notCollectedAmount}</div>
+	                    </div>
+	                </div>
+	            </div>
+	            
+	            <div class="ui-g-12 ui-md-3">
+	                <div class="overview-box overview-box-2">
+	                    <div class="overview-box-header"></div>
+	                    <div class="overview-box-content">
+	                        <div class="overview-box-icon"><i class="material-icons">&#xE56A;</i></div>
+	                        <div class="overview-box-title">المبالغ المحصلة</div>
+	                        <div class="overview-box-count">#{dashboardBean.collectedAmount}</div>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="ui-g-12 ui-md-3">
+	                <div class="overview-box overview-box-3">
+	                    <div class="overview-box-header"></div>
+	                    <div class="overview-box-content">
+	                        <div class="overview-box-icon"><i class="material-icons">&#xE8D3;</i></div>
+	                        <div class="overview-box-title">المناديب الأونلاين</div>
+	                        <div class="overview-box-count">#{dashboardBean.onlineDelegatesCount}</div>
+	                    </div>
+	                </div>
+	            </div>
+	            
+	            <div class="ui-g-12 ui-md-3">
+	                <div class="overview-box overview-box-4">
+	                    <div class="overview-box-header"></div>
+	                    <div class="overview-box-content">
+	                        <div class="overview-box-icon"><i class="material-icons">&#xE24D;</i></div>
+	                        <div class="overview-box-title">الإيصالات</div>
+	                        <div class="overview-box-count">#{dashboardBean.receiptsCount}</div>
+	                    </div>
+	                </div>
+	            </div>
+	            
+	            
+            </div>
+            
+            <div class="ui-g-12 ui-g-nopad">
+                <div class="ui-g-10 global-sales" style="float:none !important;margin:0 auto">
+                    <p:panel rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_TRACK_DELEGATES)}">
+                        <f:facet name="header">
+                            المتابعة اللحظية للمناديب
+                            <span class="header-helper"></span>
+                        </f:facet>
+                        
+                        <p:dataTable  paginator="true" 
+                        paginatorTemplate="{PageLinks}"
+                        paginatorPosition="bottom" 
+                        rows="5"
+                        rowKey="#{receipt.id}" 
+                        emptyMessage="لا يوجد ايصالات غير محصلة" 
+                        styleClass="ui-datatable-noborder" 
+                        var="receiptDashboard" rowIndexVar="index"
+                        value="#{dashboardBean.receiptDashboardList}">
+						    
+						    <p:column headerText="" style="width:10px;text-align:center">
+						        <h:outputText value="#{index+1}" />
+						    </p:column>
+						    
+						    <p:column headerText="" style="width:35px;text-align:center">
+						        <p:graphicImage name="images/avatar3.png" library="serenity-layout" width="45"/>
+						    </p:column>
+						 
+						    <p:column headerText="">
+						        <h:outputText value="#{receiptDashboard.delegate.displayName}" />
+						    </p:column>
+						 
+						    <p:column headerText="رقم الإيصال" style="width:80px;text-align:center">
+						        <h:outputText value="#{receiptDashboard.receipt.id}" />
+						    </p:column>
+						 
+						    <p:column headerText="تاريخ الإيصال" style="text-align:center">
+						        <h:outputText value="#{receiptDashboard.receipt.receiptDateFormatted}" />
+						    </p:column>
+						    
+						    <p:column headerText="الوقت" style="width:80px;text-align:center">
+						        <h:outputText value="#{receiptDashboard.receipt.receiptTimeFormatted}" />
+						    </p:column>
+						    
+						    <p:column headerText="المبلغ" style="width:80px;text-align:center">
+						        <h:outputText value="#{receiptDashboard.receipt.totalAmount} درهم" />
+						    </p:column>
+						    
+						    <p:column headerText="إجمالي المندوب" style="text-align:center">
+						        <h:outputText value="#{receiptDashboard.delegateNotCollectedAmount} درهم" />
+						    </p:column>
+						    
+						    <p:rowExpansion>
+					            <p:dataTable style="float:right" styleClass="ui-g-6" var="receiptDetail"  rowIndexVar="subIndexVar" value="#{receiptDashboard.receipt.receiptDetailsList}">
+							        <f:facet name="header">
+							            تفاصيل الإيصال
+							        </f:facet>
+							        
+							        <p:column headerText="م" style="width:16px;text-align:center">
+								        <h:outputText value="#{subIndexVar+1}" />
+								    </p:column>
+								    
+								    <p:column headerText="اسم الكوبون" style="text-align:center">
+								        <h:outputText value="#{receiptDetail.couponName}" />
+								    </p:column>
+								    
+							        <p:column headerText="المبلغ" style="text-align:center">
+								        <h:outputText value="#{receiptDetail.amount}" />
+								    </p:column>
+								    
+                                </p:dataTable>
+					        </p:rowExpansion>
+						    
+						    <p:column headerText="" styleClass="rowTogglerCustom">
+						      <p:rowToggler  />
+						      <p:button target="_blank" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_DELEGATES_INCOME)}" title="طباعة إيرادات مندوب" icon="ui-icon ui-icon-print"  href="delegatesIncomeTotal.xhtml?id=#{receiptDashboard.delegate.idEncrypted}" />
+						      <p:button target="_blank" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_COLLECT_MONEY)}" title="تحصيل من المندوب" icon="ui-icon ui-icon ui-icon-monetization-on"  href="collection.xhtml?id=#{receiptDashboard.delegate.idEncrypted}"/>
+						    </p:column>
+						    
+					    </p:dataTable>
+                        
+                    </p:panel>
+                </div>
+
+                <h:panelGroup layout="block" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_DELEGATES_INCOME)}" styleClass="ui-g-10 global-sales" style="float:none !important;margin:0 auto">
+                    <div class="card" >                      
+                           <p:barChart styleClass="delegatesBar" rendered="#{dashboardBean.delegatesChartMap.size() >= 0}"  model="#{dashboardBean.delegatesBarModel}" />                    
+                    </div>
+                </h:panelGroup>
+                
+                <h:panelGroup layout="block" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_COUPONS_INCOME)}" styleClass="ui-g-10 global-sales" style="float:none !important;margin:0 auto">
+                    <div class="card" >                     
+                           <p:barChart  styleClass="couponsBar" rendered="#{dashboardBean.couponsChartMap.size() >= 0}"  model="#{dashboardBean.couponsBarModel}" />                                                 
+                    </div>
+                </h:panelGroup>
+                
+                 
+               
+
+            </div>
+            
+            
+
+        </div>
+        
+       
+    </ui:define>
+
+</ui:composition>

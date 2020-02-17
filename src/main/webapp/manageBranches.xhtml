@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">إعدادات الفروع</ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                
+                
+				
+				<p:remoteCommand name="hideForm" partialSubmit="true" immediate="true" action="#{branchManagementBean.hideForm()}"  update=":form:formPanel"/>
+                
+				<p:commandButton partialSubmit="true" id="addNewButton" action="#{branchManagementBean.addNewButtonClicked}" immediate="true" update=":form:formPanel"  value="إضافة فرع" icon="fa fa-plus" style="margin-top:10px;margin-bottom:10px;" />
+				
+
+				<p:outputPanel  id="formPanel">
+	                <p:panel rendered="#{branchManagementBean.renderForm}" styleClass="card customInputs" >
+	
+			            <h1>
+			              <h:outputText rendered="#{!branchManagementBean.editMode}" value="إضافة فرع"/>
+			              <h:outputText rendered="#{branchManagementBean.editMode}" value="تحديث فرع : #{branchManagementBean.branch.nameArabic}"/>
+			            </h1>
+			            
+			            
+			            
+			            <p:growl id="growl" showDetail="true" life="3000" />
+			            
+			            <p:panelGrid columns="2" styleClass="ui-noborder">
+			               
+			               <p:outputLabel value="اسم الفرع" />
+			               <p:inputText id="branchName" onfocus="this.setSelectionRange(this.value.length,this.value.length);" value="#{branchManagementBean.branch.nameArabic}" required="true" requiredMessage="يرجى ادخال اسم الفرع"/>
+			               
+			               <p:outputLabel value="الإمارة" />
+					       <p:selectOneMenu id="emarahMenu"
+					            required="true" requiredMessage="يرجى اختيار الإمارة" 
+								value="#{branchManagementBean.selectedEmarah}"
+								converter="omnifaces.SelectItemsConverter"
+								filter="true" filterMatchMode="contains">									
+								<f:selectItems value="#{branchManagementBean.emarahList}"
+									var="emarah" itemLabel="#{emarah.nameArabic}"
+									itemValue="#{emarah}" />
+								<p:ajax listener="#{branchManagementBean.emarahChanged}"
+									update="cityMenu" />
+							</p:selectOneMenu>
+						    
+					       
+					       <p:outputLabel value="المدينة" />
+					       <p:selectOneMenu id="cityMenu" 
+					            required="true" requiredMessage="يرجى اختيار المدينة"
+								value="#{branchManagementBean.selectedCity}"
+								converter="omnifaces.SelectItemsConverter"
+								filter="true" filterMatchMode="contains">									
+								<f:selectItems value="#{branchManagementBean.cityList}"
+									var="city" itemLabel="#{city.nameArabic}"
+									itemValue="#{city}" />
+							</p:selectOneMenu>
+			               
+			                <p:outputLabel value="فعال" />
+			                <p:selectBooleanCheckbox value="#{branchManagementBean.branch.active}" />
+
+                            			               
+			            </p:panelGrid>
+			            
+			            
+					    <p:commandButton update="formPanel TableContainer" value="حفظ" action="#{branchManagementBean.createOrUpdateBranch}" onstart="PF('blockDialog').show();" oncomplete="PF('blockDialog').hide();" style="margin-top:10px" icon="fa fa-save" />
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                <h:panelGroup id="TableContainer" layout="block" styleClass="card">
+	                <h1>الفروع</h1>
+	                <p:dataTable var="branch"
+	                emptyMessage="لا يوجد فروع" 
+	                dir="rtl"
+	                widgetVar="accountantsTable"
+	                paginator="#{branchManagementBean.branchList.size() > 5}"
+	                paginatorTemplate="{PageLinks}"
+	                rows="5"
+	                sortMode="multiple"
+	                filteredValue="#{branchManagementBean.filteredBranchList}"
+	                value="#{branchManagementBean.branchList}">
+					    
+					    <p:column headerText="الإسم" filterBy="#{branch.nameArabic}" sortBy="#{branch.nameArabic}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{branch.nameArabic}" />
+					    </p:column>
+					 
+					    <p:column headerText="المدينة" filterBy="#{branch.city.nameArabic}" sortBy="#{branch.city.nameArabic}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{branch.city.nameArabic}" />
+					    </p:column>
+					    
+					    <p:column headerText="الحالة" filterBy="#{branch.active}" sortBy="#{branch.active}" filterMatchMode="exact" style="text-align:center">
+					        <h:outputText value="فعال" rendered="#{branch.active}"/>
+					        <h:outputText value="غير فعال" rendered="#{!branch.active}"/>
+					    </p:column>
+					    
+					    <p:column headerText="تاريخ آخر تعديل" filterBy="#{branch.dateLastModified}" sortBy="#{branch.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+							   <h:outputText value="#{branchManagementBean.formatDateTime(branch.dateLastModified)}" />
+						</p:column>
+					    
+					    <p:column headerText="" width="100" style="text-align:center;">
+					        <p:commandButton onclick="hideForm();"  immediate="true"  action="#{branchManagementBean.setSelectedRow(branch)}"  update=":form:formPanel"  icon="ui-icon-pencil"  />
+					    </p:column>
+					    
+					    
+					    
+					</p:dataTable>
+				</h:panelGroup>
+            </div>
+            
+            
+        </div>
+        </h:form>
+        
+    </ui:define>
+
+</ui:composition>

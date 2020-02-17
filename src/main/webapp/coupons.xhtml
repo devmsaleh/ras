@@ -1,0 +1,184 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">الكوبونات</ui:define>
+    
+    <ui:define name="head">
+       <script type="text/javascript">    
+		    PrimeFaces.locales['ar'] = {
+		        closeText: 'إغلاق',
+		        prevText: 'السابق',
+		        nextText: 'التالي',
+		        monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+		        monthNamesShort: ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر' ],
+		        dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesShort: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesMin: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء ', 'الخميس', 'الجمعة ', 'السبت'],
+		        weekHeader: 'الاسبوع',
+		        FirstDay: 1,
+		        isRTL: false,
+		        showMonthAfterYear: false,
+		        yearSuffix: '',
+		        timeOnlyTitle: 'الوقت فقط',
+		        timeText: 'الوقت',
+		        hourText: 'ساعة',
+		        minuteText: 'دقيقة',
+		        secondText: 'ثانية',
+		        currentText: 'تاريخ اليوم',
+		        ampm: false,
+		        month: 'شهر',
+		        week: 'اسبوع',
+		        day: 'يوم',
+		        allDayText: 'طوال اليوم'
+		    };
+		</script>
+    </ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                
+                
+				
+				<p:remoteCommand name="hideForm" partialSubmit="true" immediate="true" action="#{couponBean.hideForm()}"  update=":form:formPanel"/>
+                
+				<p:commandButton partialSubmit="true" id="addNewButton" action="#{couponBean.addNewButtonClicked}" immediate="true" update=":form:formPanel"  value="إضافة كوبون" icon="fa fa-plus" style="margin-top:10px;margin-bottom:10px;" />
+				<p:commandButton partialSubmit="true" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();" id="refreshCache" action="#{couponBean.refreshCache(true)}" immediate="true" update=":form:formPanel"  value="تحديث الكاش" icon="fa fa-refresh" style="margin-top:10px;margin-bottom:10px;float:left">
+				  <p:confirm header="تأكيد" message="هل أنت متأكد ؟" icon="pi pi-exclamation-triangle" />
+				</p:commandButton>
+				
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			        <p:commandButton value="لا" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+			        <p:commandButton value="نعم" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />		        
+			    </p:confirmDialog> 
+    
+				<p:importEnum type="com.charity.enums.UserTypeEnum" var="userTypeEnum" allSuffix="ALL_ENUM_VALUES" /> 
+				
+				<p:outputPanel  id="formPanel">
+	                <p:panel rendered="#{couponBean.renderForm}" styleClass="card customInputs" >
+	
+			            <h1>
+			              <h:outputText rendered="#{!couponBean.editMode}" value="إضافة كوبون"/>
+			              <h:outputText rendered="#{couponBean.editMode}" value="تحديث الكوبون : #{couponBean.coupon.name}"/>
+			            </h1>
+			            
+			            
+			            
+			            <p:growl id="growl" showDetail="true" life="3000" />
+			            
+			            <p:panelGrid columns="4" styleClass="ui-noborder">
+			               
+			                <p:outputLabel value="اسم الكوبون" />
+			                <p:inputText id="couponName" value="#{couponBean.coupon.name}" required="true" requiredMessage="يرجى ادخال اسم الكوبون"/>
+			               
+			                <p:outputLabel value="فعال" />
+			                <p:selectBooleanCheckbox value="#{couponBean.coupon.active}" />
+
+                            <p:outputLabel value="القيمة" />
+						    <p:inputNumber  value="#{couponBean.coupon.value}" maxValue="999999999" padControl="false" thousandSeparator="" required="true" requiredMessage="يرجى ادخال القيمة"/>
+							
+					        <p:outputLabel value="القيمة الصغرى" />
+						    <p:inputNumber  value="#{couponBean.coupon.minimumAmount}" maxValue="999999999" padControl="false" thousandSeparator=""/>
+							
+						    <p:outputLabel value="الترتيب" />
+						    <p:inputNumber  value="#{couponBean.coupon.priority}" maxValue="999999999" padControl="false" thousandSeparator=""/>
+							
+							<p:outputLabel value="تاريخ الانتهاء" />
+							<p:calendar locale="ar" navigator="true" pattern="yyyy/MM/dd" mindate="#{couponBean.minDate}"  value="#{couponBean.coupon.expiryDate}" />
+							
+						    <p:outputLabel value="الحساب" rendered="false"/>
+					        <p:selectOneMenu rendered="false" 
+								value="#{couponBean.coupon.account}"
+								converter="omnifaces.SelectItemsConverter"
+								filter="true" filterMatchMode="contains">									
+								<f:selectItems value="#{couponBean.accountsList}"
+									var="account" itemLabel="#{account.name}"
+									itemValue="#{account}" />
+							</p:selectOneMenu>
+							
+						    <p:outputLabel value="النوع" rendered="false"/>
+					        <p:selectOneMenu rendered="false"
+								value="#{couponBean.coupon.type}"
+								converter="omnifaces.SelectItemsConverter"
+								filter="true" filterMatchMode="contains">									
+								<f:selectItems value="#{couponBean.couponTypesList}"
+									var="couponType" itemLabel="#{couponType.name}"
+									itemValue="#{couponType}" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel value="يجب إدخال متبرع" />
+			                <p:selectBooleanCheckbox value="#{couponBean.coupon.mustEnterDonator}" />
+			               
+			            </p:panelGrid>
+			            
+			            <p:panelGrid id="uploadTable" columns="1" styleClass="ui-noborder">
+				            <p:fileUpload fileUploadListener="#{couponBean.handleFileUpload}" mode="advanced"
+	                           onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();"
+	                           update="growl uploadTable" auto="true" label="تحميل صورة" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />					            
+					        
+					        <p:outputPanel style="margin-right:5px;">
+					          <p:outputLabel style="margin-left:15px;" value="#{couponBean.file.fileName}" rendered="#{couponBean.file != null}"/>
+					          <p:commandButton  immediate="true"  action="#{couponBean.removeImage}" rendered="#{couponBean.file != null}"  update="uploadTable"  icon="ui-icon-close"  />
+					        </p:outputPanel>
+					    </p:panelGrid>
+					    <p:commandButton update="formPanel TableContainer" value="حفظ" action="#{couponBean.createOrUpdateCoupon}" style="margin-top:10px" icon="fa fa-save" />
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                <h:panelGroup id="TableContainer" layout="block" styleClass="card">
+	                <h1>الكوبونات</h1>
+	                <p:dataTable var="coupon"
+	                emptyMessage="لا يوجد كوبونات" 
+	                dir="rtl"
+	                widgetVar="couponsTable"
+	                paginator="#{couponBean.couponsList.size() > 5}"
+	                paginatorTemplate="{PageLinks}"
+	                rows="5"
+	                sortMode="multiple"
+	                filteredValue="#{couponBean.filteredCouponsList}"
+	                value="#{couponBean.couponsList}">
+					    
+					    <p:column headerText="الإسم" filterBy="#{coupon.name}" sortBy="#{coupon.name}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{coupon.name}" />
+					    </p:column>
+					 
+					    <p:column headerText="الترتيب" filterBy="#{coupon.priority}" sortBy="#{coupon.priority}" filterMatchMode="exact" style="text-align:center">
+					        <h:outputText value="#{coupon.priority}" />
+					    </p:column>
+					    
+					    <p:column headerText="الحالة" filterBy="#{coupon.active}" sortBy="#{coupon.active}" filterMatchMode="exact" style="text-align:center">
+					        <h:outputText value="فعال" rendered="#{coupon.active}"/>
+					        <h:outputText value="غير فعال" rendered="#{!coupon.active}"/>
+					    </p:column>
+					    
+					    <p:column headerText="القيمة" filterBy="#{coupon.value}" sortBy="#{coupon.value}" filterMatchMode="startsWith" style="text-align:center">
+					        <h:outputText value="#{coupon.value}" />
+					    </p:column>
+					    
+					    <p:column headerText="">
+					         <p:graphicImage cache="false" width="200" height="120" value="/imageServlet?id=#{coupon.id}" />
+					    </p:column>
+					    
+					    <p:column headerText="" width="100" style="text-align:center;">
+					        <p:commandButton onclick="hideForm();"  immediate="true"  action="#{couponBean.setSelectedRow(coupon)}"  update=":form:formPanel"  icon="ui-icon-pencil"  />
+					    </p:column>
+					    
+					</p:dataTable>
+				</h:panelGroup>
+            </div>
+            
+            
+        </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

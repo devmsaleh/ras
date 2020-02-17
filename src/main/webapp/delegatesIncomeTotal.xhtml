@@ -1,0 +1,210 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">إيراد المندوبين إجمالي</ui:define>
+    
+    <ui:define name="head">
+       <script type="text/javascript">    
+		    PrimeFaces.locales['ar'] = {
+		        closeText: 'إغلاق',
+		        prevText: 'السابق',
+		        nextText: 'التالي',
+		        monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+		        monthNamesShort: ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر' ],
+		        dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesShort: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesMin: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء ', 'الخميس', 'الجمعة ', 'السبت'],
+		        weekHeader: 'الاسبوع',
+		        FirstDay: 1,
+		        isRTL: false,
+		        showMonthAfterYear: false,
+		        yearSuffix: '',
+		        timeOnlyTitle: 'الوقت فقط',
+		        timeText: 'الوقت',
+		        hourText: 'ساعة',
+		        minuteText: 'دقيقة',
+		        secondText: 'ثانية',
+		        currentText: 'تاريخ اليوم',
+		        ampm: false,
+		        month: 'شهر',
+		        week: 'اسبوع',
+		        day: 'يوم',
+		        allDayText: 'طوال اليوم'
+		    };
+		</script>
+    </ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g" dir="rtl">
+            <div class="ui-g-12">
+                
+                 
+				
+				<p:outputPanel  id="formContainer">
+	                <p:panel styleClass="card customInputs" style="padding-right:5%;">
+                        
+                        <h1>إيراد المندوبين إجمالي</h1>
+			            
+			            <p:growl id="growl"  life="3000" />
+			            
+			            <p:panelGrid style="width:100%" columns="2" styleClass="ui-noborder rtlTable" columnClasses="ui-g-1,ui-g-2">
+			               
+			               <p:outputLabel value="من" />
+			               <p:calendar  locale="ar" navigator="true" pattern="yyyy/MM/dd" maxdate="#{reportBean.todayDate}" value="#{reportBean.fromDate}" />
+			               
+			               <p:outputLabel value="إلى" />
+			               <p:calendar  locale="ar" navigator="true" pattern="yyyy/MM/dd" maxdate="#{reportBean.todayDate}" value="#{reportBean.toDate}" />
+			               
+			               <p:outputLabel value="المندوب" />
+					       <p:selectOneMenu
+								value="#{reportBean.delegate}"
+								converter="omnifaces.SelectItemsConverter"
+								filter="true" filterMatchMode="contains">									
+								<f:selectItem itemLabel="اختر المندوب" itemValue="#{null}" noSelectionOption="true"/>	
+								<f:selectItems value="#{reportBean.delegatesList}"
+									var="user" itemLabel="#{user.displayName}"
+									itemValue="#{user}" />
+						   </p:selectOneMenu>
+							
+						   <p:outputLabel value="نوع الكوبون" />
+					       <p:selectOneMenu
+								value="#{reportBean.coupon}"
+								converter="omnifaces.SelectItemsConverter"
+								filter="true" filterMatchMode="contains">									
+								<f:selectItem itemLabel="اختر الكوبون" itemValue="#{null}" noSelectionOption="true"/>	
+								<f:selectItems value="#{reportBean.couponsList}"
+									var="coupon" itemLabel="#{coupon.name}"
+									itemValue="#{coupon}" />
+							</p:selectOneMenu>
+							
+						    <p:outputLabel value="الحالة" />
+			                <p:selectOneRadio  value="#{reportBean.collected}" style="min-width:300px;">
+			                    <f:selectItem itemLabel="الجميع" itemValue="#{null}" />
+					            <f:selectItem itemLabel="محصل" itemValue="true" />
+					            <f:selectItem itemLabel="غير محصل" itemValue="false" />
+					        </p:selectOneRadio>	
+			               	
+			               			            
+			             </p:panelGrid>
+					      
+					    
+					    <p:commandButton update="reportDialog" value="عرض التقرير" onstart="PF('blockDialog').show();"
+	                           oncomplete="PF('blockDialog').hide();if(!args.validationFailed){PF('reportDialog').show();}" action="#{reportBean.generateDelegatesIncomeTotalReport}" style="margin-top:10px" icon="fa fa-table" />
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                
+            </div>
+            
+            
+        </div>
+        
+        <p:dialog onShow="PF('reportDialog').toggleMaximize();" onHide="PF('reportDialog').toggleMaximize(); " styleClass="reportDialog" resizable="true" dir="rtl" closeOnEscape="true"  id="reportDialog"  header="إيراد المندوبين إجمالي" widgetVar="reportDialog" style="margin-top:70px;" width="900" height="500" >
+		  
+		      <p:commandButton value="طباعة"  type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                <p:printer target="printDiv" /> 
+              </p:commandButton>
+		      <h:panelGroup layout="block" styleClass="printDiv" id="printDiv" style="direction:rtl;width:99%;">			      
+				  
+				  
+				  <h:panelGrid styleClass="printHeader" columns="3" id="header" style="width:95%;margin-right:0%;" columnClasses="headerCol1,headerCol2,headerCol3">
+				      <h:panelGrid column="1" id="rightHeader" style="margin:auto; width:55%">
+				         <p:graphicImage name="images/logo-large.jpg" style="height:70px;width:230px;" library="serenity-layout" />
+				      </h:panelGrid>
+					  <h:panelGrid column="1" id="MiddleHeader" style="margin:auto; width:100%;text-align:center">					     
+				        <h:outputLabel style="font-size:20px;font-weight:normal" value="إيراد المندوبين إجمالي"/>
+				      </h:panelGrid>					  
+					  <h:panelGrid columns="1" id="leftHeader" style="margin:auto; width:100%;text-align:center">
+				         <h:outputLabel value="#{bundle.appName}" style="font-size:20px;font-weight:normal"/>
+						 <h:outputLabel value="#{reportBean.nowDate}" style="font-size:20px;font-weight:normal"/>
+				      </h:panelGrid>
+				  </h:panelGrid>
+				  
+				  <h:panelGrid columns="4" style="margin: 0 auto;font-size:18px;">
+				      
+				      <p:outputLabel value="من تاريخ :" />
+				      <p:outputLabel value="#{reportBean.formatDate(reportBean.fromDate)}" style="padding-right:10px;padding-left:200px;"/>
+				      
+				      <p:outputLabel value="إلى تاريخ :" />
+				      <p:outputLabel value="#{reportBean.formatDate(reportBean.toDate)}" />
+				      
+				      <p:outputLabel value="الحالة :" />
+				      <p:outputLabel rendered="#{reportBean.collected != null}" value="#{reportBean.collected == true ? 'محصل':'غير محصل'}" />
+				      <p:outputLabel rendered="#{reportBean.collected == null}" value="" />
+				      
+				      <p:outputLabel value="اسم الكوبون :" />
+				      <p:outputLabel rendered="#{reportBean.coupon != null}" value="#{reportBean.coupon.name}" />
+				      <p:outputLabel rendered="#{reportBean.coupon == null}" value="" />
+				      
+				  </h:panelGrid>
+				  
+				  <h:panelGroup layout="block" id="tableDiv" style="font-size:13pt;width:100%">
+					  <p:dataTable emptyMessage="" rowIndexVar="indexVar"  
+					  id="detailsTable"
+					  value="#{reportBean.delegatesTotalList}" 
+					  var="delegateIncomeReportDTO" >
+                            <p:column width="50" style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="م" />
+								</f:facet>
+								<h:outputText value="#{indexVar+1}" />
+						    </p:column>
+						    						    
+						    <p:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="اسم المندوب" />
+								</f:facet>
+								<h:outputText value="#{delegateIncomeReportDTO.delegateName}" />
+						    </p:column>
+						    
+						    <p:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="إجمالي النقدي" />
+								</f:facet>
+								<h:outputText value="#{delegateIncomeReportDTO.cashAmount}" />
+						    </p:column>
+						    
+						    <p:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="إجمالي الشيك" />
+								</f:facet>
+								<h:outputText value="#{delegateIncomeReportDTO.chequeAmount}" />
+						    </p:column>
+						    
+						    <p:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="إجمالي بطاقة الائتمان" />
+								</f:facet>
+								<h:outputText value="#{delegateIncomeReportDTO.creditCardAmount}" />
+						    </p:column>
+						    
+						    <p:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="الإجمالي" />
+								</f:facet>
+								<h:outputText value="#{delegateIncomeReportDTO.totalAmount}" />
+						    </p:column>
+						   
+						    <f:facet name="footer">
+						        الإجمالي : #{reportBean.totalAmount}
+						    </f:facet>
+						    
+					  </p:dataTable>
+				  </h:panelGroup>
+
+				  <h:panelGroup layout="block" id="footer" style="height:50px;"></h:panelGroup>
+			  </h:panelGroup>
+  		  	  
+		  </p:dialog>
+		  
+        </h:form>
+    </ui:define>
+
+</ui:composition>

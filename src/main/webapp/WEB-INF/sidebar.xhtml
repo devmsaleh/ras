@@ -1,0 +1,52 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/serenity">
+
+    <div class="layout-sidebar layout-sidebar-dark}">
+        <div class="sidebar-logo" style="display:none">
+            <a href="dashboard.xhtml">
+                <p:graphicImage name="images/logo-slim.png" library="serenity-layout" />
+                <span class="app-name">SERENITY</span>
+            </a>
+            <a href="#" class="sidebar-anchor" title="Toggle Menu"></a>
+        </div>
+
+        <div class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="layout-menu-container">
+                    <h:form id="menuform">
+                        <p:importEnum type="com.charity.enums.RoleTypeEnum" var="roleTypeEnum" allSuffix="ALL_ENUM_VALUES" />
+                        <pm:menu>
+                            <p:menuitem  value="الصفحة الرئيسية" icon="&#xE871;" outcome="/dashboard"/>
+                            <p:menuitem  value="الكوبونات" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_MANAGE_COUPONS)}" icon="&#xe8f6;" outcome="/coupons"/>
+                            <p:menuitem  value="المناديب" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_MANAGE_DELEGATES)}" icon="&#xe7fb;" outcome="/delegates" />
+                            <p:menuitem  value="مسؤولي النظام" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_MANAGE_EMPLOYEES)}" icon="&#xe55a;" outcome="/employees" />
+                            <p:menuitem  value="انشاء سند يدوي" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_CREATE_MANUAL_RECEIPT)}" icon="&#xe8b0;" outcome="/createReceipt" />                           
+                            <p:submenu  label="اعدادات النظام" icon="&#xe8b9;" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_MANAGE_SETTINGS)}">
+                                <p:menuitem  value="اعدادات الرسائل القصيرة" icon="&#xe8b9;" outcome="/settings" />
+                                <p:menuitem  value="اعدادات المناطق والمواقع" icon="&#xe8b9;" outcome="/lookupSettings" />
+                                <p:menuitem  value="اعدادات مسؤولي الحسابات" icon="&#xe8b9;" outcome="/manageAccountants" />
+                                <p:menuitem  value="اعدادات الفروع" icon="&#xe8b9;" outcome="/manageBranches" />
+                            </p:submenu>
+                            
+                            <p:submenu  label="استلام وتسليم الأموال" icon="&#xe8f9;" rendered="#{currentUserBean.admin || currentUserBean.hasRole(roleTypeEnum.ROLE_COLLECT_MONEY) || currentUserBean.hasRole(roleTypeEnum.ROLE_DEPOSIT_FINANCE)}">
+                                <p:menuitem  value="استلام الأموال من المناديب" icon="&#xe8f9;" outcome="/collection" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_COLLECT_MONEY)}"/>
+                                <p:menuitem  value="تسليم المبالغ للحسابات" icon="&#xe8f9;" outcome="/financeDeposit" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_DEPOSIT_FINANCE)}"/>
+                            </p:submenu>
+                            <p:submenu  label="التقارير" icon="&#xe24b;" rendered="#{currentUserBean.admin or currentUserBean.hasReportsRole}">
+                                <p:menuitem  value="إيراد المندوبين إجمالي" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_DELEGATES_INCOME)}" icon="&#xE233;" outcome="/delegatesIncomeTotal"/>
+                                <p:menuitem  value="بيانات المحسنين"  rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_BENEFACTORS)}" icon="&#xE233;" outcome="/benefactorsReport"/>
+                            </p:submenu>
+                            <p:menuitem  value="تسجيل خروج" icon="&#xE8AC;" url="#{request.contextPath}/logout" />  
+                        </pm:menu>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

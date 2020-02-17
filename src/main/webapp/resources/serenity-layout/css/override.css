@@ -1,0 +1,237 @@
+.ui-inputtext,.hasDatepicker,.ui-inputmask{
+	background-image:none !important;
+	border: 1px solid #a6a6a6 !important;
+	border-radius: 3px !important;
+	width: 97% !important;
+	height: 20px !important;
+}
+
+.ui-autocomplete-input{
+	background-image:none !important;
+	border: 1px solid #a6a6a6 !important;
+	border-radius: 3px !important;
+	width: 97% !important;
+	height: 20px !important;
+}
+
+.ui-selectonemenu{
+	background-image:none !important;
+	border: 1px solid #a6a6a6 !important;
+	border-radius: 3px !important;
+	width:100% !important;
+	min-width: 153px !important;
+}
+
+
+
+.ui-inputtextarea{
+	background-image:none !important;
+	border: 1px solid #a6a6a6 !important;
+	border-radius: 3px !important;
+	width:97% !important;
+}
+
+.ui-column-filter{
+	background-image:none !important;
+	border: 1px solid #a6a6a6 !important;
+	border-radius: 3px !important;
+	width:93% !important;
+}
+
+.ui-selectonemenu .ui-selectonemenu-label{
+	text-align: right !important;
+	padding: 2px 2px 2px 10px !important;
+}
+
+
+.ui-chkbox{
+    margin: 0px !important;
+    vertical-align: top !important;
+}
+
+.ui-chkbox .ui-chkbox-box{
+	width: 100% !important;	    
+    text-align: center !important;
+}
+
+.ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon{
+	right:0px;
+}
+
+body .ui-datepicker{
+	width:auto !important;
+	max-width: 350px;
+}
+
+.ui-message-dialog .ui-dialog-content{
+	font-size: 20px;
+}
+
+.ui-message-dialog .ui-dialog-content .ui-messages-info-icon{
+	margin-top: 0px;
+}
+
+.ui-paginator-pages .ui-state-active{
+	background-color: #00bcd4 !important;
+}
+
+.ui-paginator .ui-paginator-pages a{
+	line-height: 26px !important;
+}
+
+.ui-message-dialog{
+	max-width: 500px !important;
+}
+
+.ui-fileupload-buttonbar,.ui-fileupload-content{
+	background-color: white !important;
+	border: none !important;
+}
+
+.ui-fileupload-buttonbar{
+    padding: 8px 0px !important;
+    margin-right: 0px !important;
+}
+
+.ui-fileupload-choose{
+	margin-right: 0px !important;
+}
+
+.ui-fileupload-content{
+	display:none !important;
+}
+
+.ui-growl-message{
+	margin-top: 10px;
+}
+
+.ui-growl-icon-close{
+	font-family: 'Material Icons' !important;
+}
+
+.ui-dialog-content{
+	text-align: right;
+}
+
+.ui-state-disabled{
+	opacity: 0.9 !important;
+}
+
+.ui-radiobutton-box.ui-state-disabled {
+    display: none;
+}
+
+.ui-selectonemenu-item.ui-state-disabled {
+    display: none;
+}
+
+.ui-datatable-noborder thead tr th,.ui-datatable-noborder thead th:first-child,.ui-datatable-noborder thead th:last-child,.ui-datatable-noborder tbody tr td{
+	border: none !important;
+}
+
+.ui-noborder{
+	border:none !important;
+}
+
+.ui-fieldset-legend{
+	font-size: 17px;
+}
+
+.centerText .ui-inputtext{
+	text-align: center !important;
+}
+
+.headerColumn{
+	/*
+	background: #607D8B;
+    color: white;
+    text-align: center;
+    */
+    text-align: center;
+    font-weight: bold;
+}
+
+.ui-row-toggler{
+	font-family: 'Material Icons' !important;
+}
+
+.scrollable .ui-datatable-tablewrapper{
+	max-height: 200px;
+}
+
+.ui-confirm-dialog .ui-dialog-title,.ui-message-dialog .ui-dialog-title{
+	font-size: 18px;
+}
+
+.ui-confirm-dialog-message{
+	font-size: 18px;
+}
+
+.ui-confirmdialog-yes,.ui-confirmdialog-no{
+	background-color: #00A69C !important;
+    color: white !important;
+}
+
+.ui-confirmdialog-yes .ui-button-text{
+	font-size: 18px !important;
+}
+
+.ui-confirmdialog-no .ui-button-text{
+	font-size: 18px !important;
+}
+
+.ui-confirmdialog-yes .ui-icon{
+	 color: white !important;
+}
+
+.ui-confirmdialog-no .ui-icon{
+	 color: white !important;
+}
+
+.jqplot-title{
+	font-size: 17px;
+	font-weight: bold;
+}
+
+.rtlTable td{
+	float: right !important;
+}
+
+.ui-g-25{
+	width:21%;
+}
+
+.ui-growl{
+	right:60px !important;
+}
+
+.reportDialog{
+	z-index:9999999999 !important;
+}
+
+.reportDialog th span{
+	font-size: 11pt !important;
+}
+
+.ui-linkbutton{
+	padding:0 0px !important;
+}
+
+.ui-dialog-title{
+	float:right !important;
+}
+
+.ui-dialog-titlebar-close{
+	float:left !important;
+}
+
+.ui-fieldset-legend{
+	color: black !important;
+	font-size: 20px;
+}
+
+.printDiv .ui-datatable-footer{
+	background-color: white !important;
+    color: black !important;
+    border: 1px solid #d8d8d8 !important;
+}  

@@ -1,0 +1,148 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">تقرير المحسنين</ui:define>
+    
+    <ui:define name="head">
+       <script type="text/javascript">    
+		    PrimeFaces.locales['ar'] = {
+		        closeText: 'إغلاق',
+		        prevText: 'السابق',
+		        nextText: 'التالي',
+		        monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+		        monthNamesShort: ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر' ],
+		        dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesShort: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesMin: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء ', 'الخميس', 'الجمعة ', 'السبت'],
+		        weekHeader: 'الاسبوع',
+		        FirstDay: 1,
+		        isRTL: false,
+		        showMonthAfterYear: false,
+		        yearSuffix: '',
+		        timeOnlyTitle: 'الوقت فقط',
+		        timeText: 'الوقت',
+		        hourText: 'ساعة',
+		        minuteText: 'دقيقة',
+		        secondText: 'ثانية',
+		        currentText: 'تاريخ اليوم',
+		        ampm: false,
+		        month: 'شهر',
+		        week: 'اسبوع',
+		        day: 'يوم',
+		        allDayText: 'طوال اليوم'
+		    };
+		</script>
+    </ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g" dir="rtl">
+            <div class="ui-g-12">
+                
+                 
+				
+				<p:outputPanel  id="formContainer">
+	                <p:panel styleClass="card customInputs" style="padding-right:5%;">
+                        
+                        <h1>تقرير المحسنين</h1>
+			            
+			            <p:growl id="growl"  life="3000" />
+			            
+			            <p:dataTable id="table" value="#{reportBean.benefactorsList}" var="benefactor" paginator="true" rows="10" 
+			             paginatorAlwaysVisible="false" emptyMessage="لا يوجد محسنين"
+			             filteredValue="#{reportBean.filteredBenefactorsList}">
+			
+							<p:column headerText="إسم المحسن" filterBy="#{benefactor.displayName}" sortBy="#{benefactor.displayName}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.displayName}" />
+							</p:column>
+						 
+						    <p:column headerText="رقم الجوال" filterBy="#{benefactor.mobileNumber}" sortBy="#{benefactor.mobileNumber}" filterMatchMode="startsWith">
+								<h:outputText value="#{benefactor.mobileNumber}" />
+							</p:column>
+							
+							<p:column headerText="المدينة" filterBy="#{benefactor.city.nameArabic}" sortBy="#{benefactor.city.nameArabic}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.city.nameArabic}" />
+							</p:column>
+							
+							<p:column headerText="المنطقة" filterBy="#{benefactor.region.nameArabic}" sortBy="#{benefactor.region.nameArabic}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.region.nameArabic}" />
+							</p:column>
+							
+							<p:column headerText="المكان" filterBy="#{benefactor.location.nameArabic}" sortBy="#{benefactor.location.nameArabic}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.location.nameArabic}" />
+							</p:column>
+							
+							<p:column headerText="تاريخ الإضافة" filterBy="#{benefactor.dateCreatedStr}" sortBy="#{benefactor.dateCreated}" filterMatchMode="startsWith">
+								<h:outputText value="#{benefactor.dateCreatedStr}" />
+							</p:column>
+							
+							<p:column headerText="اضيف بواسطة" filterBy="#{benefactor.creator.displayName}" sortBy="#{benefactor.creator.displayName}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.creator.displayName}" />
+							</p:column>
+							
+							
+						</p:dataTable>
+						
+						<p:dataTable id="benefactors" value="#{reportBean.benefactorsList}" style="display:none" var="benefactor" paginator="true" rows="5" 
+						             paginatorAlwaysVisible="false" emptyMessage="لا يوجد محسنين" rendered="false"
+						             filteredValue="#{reportBean.filteredBenefactorsList}">
+							
+							<p:column headerText="إسم المحسن" filterBy="#{benefactor.displayName}" sortBy="#{benefactor.displayName}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.displayName}" />
+							</p:column>
+						 
+						    <p:column headerText="رقم الجوال" filterBy="#{benefactor.mobileNumber}" sortBy="#{benefactor.mobileNumber}" filterMatchMode="startsWith">
+								<h:outputText value="#{benefactor.mobileNumber}" />
+							</p:column>
+							
+							<p:column headerText="المدينة" filterBy="#{benefactor.city.nameArabic}" sortBy="#{benefactor.city.nameArabic}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.city.nameArabic}" />
+							</p:column>
+							
+							<p:column headerText="المنطقة" filterBy="#{benefactor.region.nameArabic}" sortBy="#{benefactor.region.nameArabic}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.region.nameArabic}" />
+							</p:column>
+							
+							<p:column headerText="المكان" filterBy="#{benefactor.location.nameArabic}" sortBy="#{benefactor.location.nameArabic}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.location.nameArabic}" />
+							</p:column>
+							
+							<p:column headerText="تاريخ الإضافة" filterBy="#{benefactor.dateCreatedStr}" sortBy="#{benefactor.dateCreated}" filterMatchMode="startsWith">
+								<h:outputText value="#{benefactor.dateCreatedStr}" />
+							</p:column>
+							
+							<p:column headerText="اضيف بواسطة" filterBy="#{benefactor.creator.displayName}" sortBy="#{benefactor.creator.displayName}" filterMatchMode="contains">
+								<h:outputText value="#{benefactor.creator.displayName}" />
+							</p:column>
+							
+							
+						</p:dataTable>
+						
+						<h:panelGroup layout="block" id="exportDiv" style="text-align:center">
+							<h:commandLink>
+								<h:graphicImage value="/resources/images/excel.png" width="50" height="50" style="border:none;"/>
+								<p:dataExporter type="xls" target="benefactors" fileName="benefactors" />
+							</h:commandLink>
+						</h:panelGroup>
+			           
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                
+            </div>
+            
+            
+        </div>
+        
+        
+		  
+        </h:form>
+    </ui:define>
+
+</ui:composition>

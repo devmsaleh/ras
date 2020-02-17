@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">إعدادات مسؤولي الحسابات</ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                
+                
+				
+				<p:remoteCommand name="hideForm" partialSubmit="true" immediate="true" action="#{accountantManagementBean.hideForm()}"  update=":form:formPanel"/>
+                
+				<p:commandButton partialSubmit="true" id="addNewButton" action="#{accountantManagementBean.addNewButtonClicked}" immediate="true" update=":form:formPanel"  value="إضافة مسؤول حسابات" icon="fa fa-plus" style="margin-top:10px;margin-bottom:10px;" />
+				
+                
+				<p:outputPanel  id="formPanel">
+	                <p:panel rendered="#{accountantManagementBean.renderForm}" styleClass="card customInputs" >
+	
+			            <h1>
+			              <h:outputText rendered="#{!accountantManagementBean.editMode}" value="إضافة مسؤول حسابات"/>
+			              <h:outputText rendered="#{accountantManagementBean.editMode}" value="تحديث مسؤول الحسابات : #{accountantManagementBean.accountant.name}"/>
+			            </h1>
+			            
+			            
+			            
+			            <p:growl id="growl" showDetail="true" life="3000" />
+			            
+			            <p:panelGrid columns="2" styleClass="ui-noborder">
+			               
+			                <p:outputLabel value="اسم مسؤول الحسابات" />
+			                <p:inputText id="accountantName" onfocus="this.setSelectionRange(this.value.length,this.value.length);" value="#{accountantManagementBean.accountant.name}" required="true" requiredMessage="يرجى ادخال اسم مسؤول الحسابات"/>
+			               
+			                <p:outputLabel value="رقم الهوية" />
+			                <p:inputNumber  value="#{accountantManagementBean.accountant.identityNumber}" maxValue="999999999" padControl="false" thousandSeparator="" />
+			                
+			                <p:outputLabel value="فعال" />
+			                <p:selectBooleanCheckbox value="#{accountantManagementBean.accountant.active}" />
+
+                            			               
+			            </p:panelGrid>
+			            
+			            
+					    <p:commandButton update="formPanel TableContainer" value="حفظ" action="#{accountantManagementBean.createOrUpdateAccountant}" onstart="PF('blockDialog').show();" oncomplete="PF('blockDialog').hide();" style="margin-top:10px" icon="fa fa-save" />
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                <h:panelGroup id="TableContainer" layout="block" styleClass="card">
+	                <h1>مسؤولي الحسابات</h1>
+	                <p:dataTable var="accountant"
+	                emptyMessage="لا يوجد مسؤولي حسابات" 
+	                dir="rtl"
+	                widgetVar="accountantsTable"
+	                paginator="#{accountantManagementBean.accountantList.size() > 5}"
+	                paginatorTemplate="{PageLinks}"
+	                rows="5"
+	                sortMode="multiple"
+	                filteredValue="#{accountantManagementBean.filteredAccountantList}"
+	                value="#{accountantManagementBean.accountantList}">
+					    
+					    <p:column headerText="الإسم" filterBy="#{accountant.name}" sortBy="#{accountant.name}" filterMatchMode="contains" style="text-align:center">
+					        <h:outputText value="#{accountant.name}" />
+					    </p:column>
+					 
+					    <p:column headerText="رقم الهوية" filterBy="#{accountant.identityNumber}" sortBy="#{accountant.identityNumber}" filterMatchMode="startsWith" style="text-align:center">
+					        <h:outputText value="#{accountant.identityNumber}" />
+					    </p:column>
+					    
+					    <p:column headerText="الحالة" filterBy="#{accountant.active}" sortBy="#{accountant.active}" filterMatchMode="exact" style="text-align:center">
+					        <h:outputText value="فعال" rendered="#{accountant.active}"/>
+					        <h:outputText value="غير فعال" rendered="#{!accountant.active}"/>
+					    </p:column>
+					    
+					    <p:column headerText="تاريخ آخر تعديل" filterBy="#{accountant.dateLastModified}" sortBy="#{accountant.dateLastModified}" filterMatchMode="contains" style="text-align:center">
+							   <h:outputText value="#{accountantManagementBean.formatDateTime(accountant.dateLastModified)}" />
+						</p:column>
+					    
+					    <p:column headerText="" width="100" style="text-align:center;">
+					        <p:commandButton onclick="hideForm();"  immediate="true"  action="#{accountantManagementBean.setSelectedRow(accountant)}"  update=":form:formPanel"  icon="ui-icon-pencil"  />
+					    </p:column>
+					    
+					    
+					    
+					</p:dataTable>
+				</h:panelGroup>
+            </div>
+            
+            
+        </div>
+        </h:form>
+        
+    </ui:define>
+
+</ui:composition>
