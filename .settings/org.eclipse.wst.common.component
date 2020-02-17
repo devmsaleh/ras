@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="scef">
+    <wb-module deploy-name="ras">
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/" source-path="/WebContent"/>
@@ -8,6 +8,6 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/.apt_generated"/>
         <property name="java-output-path" value="/spring-hibernate-jsf-web/target/classes"/>
-        <property name="context-root" value="scef"/>
+        <property name="context-root" value="ras"/>
     </wb-module>
 </project-modules>
