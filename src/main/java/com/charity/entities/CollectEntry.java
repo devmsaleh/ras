@@ -54,7 +54,7 @@ public class CollectEntry extends BaseEntity implements Serializable {
 	@Column(columnDefinition = "bit default 0")
 	private boolean collectedByFinance = false; // هل تم الترحيل للمالية ام لا
 
-	@OneToMany(mappedBy = "collectEntry", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "collectEntry", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<CollectEntryReceipt> receiptsList = new ArrayList<CollectEntryReceipt>();
 
 	@Temporal(TemporalType.TIMESTAMP)

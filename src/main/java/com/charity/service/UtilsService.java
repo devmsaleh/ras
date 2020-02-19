@@ -19,6 +19,7 @@ import com.charity.dao.BranchRepository;
 import com.charity.dao.CollectEntryRepository;
 import com.charity.dao.CouponRepository;
 import com.charity.dao.FinanceEntryRepository;
+import com.charity.dao.ReceiptDetailsRepository;
 import com.charity.dao.ReceiptRepository;
 import com.charity.dto.CouponAmountDTO;
 import com.charity.entities.Accountant;
@@ -50,6 +51,9 @@ public class UtilsService {
 
 	@Autowired
 	private ReceiptRepository receiptRepository;
+
+	@Autowired
+	private ReceiptDetailsRepository receiptDetailsRepository;
 
 	@Autowired
 	private FinanceEntryRepository financeEntryRepository;
@@ -165,10 +169,12 @@ public class UtilsService {
 			financeEntry.getCollectEntryList().add(new FinanceEntryCollectEntry(financeEntry, collectEntry));
 			collectEntry.setCollectedByFinance(true);
 			collectEntry.setDateCollectedByFinance(new Date());
-			Hibernate.initialize(collectEntry.getReceiptsList());
+			// Hibernate.initialize(collectEntry.getReceiptsList());
 			for (CollectEntryReceipt collectEntryReceipt : collectEntry.getReceiptsList()) {
-				Hibernate.initialize(collectEntryReceipt.getReceipt().getReceiptDetailsList());
-				financeEntry.getReceiptDetailsList().addAll(collectEntryReceipt.getReceipt().getReceiptDetailsList());
+				// Hibernate.initialize(collectEntryReceipt.getReceipt().getReceiptDetailsList());
+				List<ReceiptDetail> receiptDetailsList = receiptDetailsRepository
+						.findByReceiptId(collectEntryReceipt.getId().getReceiptId());
+				financeEntry.getReceiptDetailsList().addAll(receiptDetailsList);
 			}
 		}
 

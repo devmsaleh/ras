@@ -2,7 +2,6 @@ package com.charity.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -52,7 +51,7 @@ public class ReceiptDetail extends BaseEntity implements Serializable {
 	private Receipt receipt;
 
 	@Column(name = "RECEIPT_ID", insertable = false, updatable = false)
-	private BigInteger receiptId;
+	private Long receiptId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ProjectStudy projectStudy;
@@ -403,11 +402,11 @@ public class ReceiptDetail extends BaseEntity implements Serializable {
 		this.couponName = couponName;
 	}
 
-	public BigInteger getReceiptId() {
+	public Long getReceiptId() {
 		return receiptId;
 	}
 
-	public void setReceiptId(BigInteger receiptId) {
+	public void setReceiptId(Long receiptId) {
 		this.receiptId = receiptId;
 	}
 

@@ -39,9 +39,9 @@ INSERT INTO city (`active`, `date_created`, `date_last_modified`, `name_arabic`,
 
 INSERT INTO branch (`active`, `date_created`, `date_last_modified`, `name_arabic`, `name_english`,city_id) VALUES (b'1', '2019-05-23 01:11:26', '2019-05-23 01:11:29', 'جميع الفروع', 'All Branches','1');
 
-INSERT INTO `scef`.`application_config` (`sms_message`, `smsurl`, `sms_user_name`, `sms_user_password`) VALUES ('شكرا لتبرعكم لجمعية سعود بن صقر تم استلام مبلغ {amountParam} رقم الإيصال {receiptNumber}', 'http://smsWebSite.com/sendMessage?user={userNameParam}&pass={passwordParam}&ProviderID=1019&text={messageParam}&msisdn={mobileNumberParam}&encoding=2', 'testUser', '12345');
+INSERT INTO application_config (`sms_message`, `smsurl`, `sms_user_name`, `sms_user_password`) VALUES ('شكرا لتبرعكم لجمعية سعود بن صقر تم استلام مبلغ {amountParam} رقم الإيصال {receiptNumber}', 'http://smsWebSite.com/sendMessage?user={userNameParam}&pass={passwordParam}&ProviderID=1019&text={messageParam}&msisdn={mobileNumberParam}&encoding=2', 'testUser', '12345');
 
-INSERT INTO `scef`.`user` (`account_non_expired`, `account_non_locked`, `credentials_non_expired`, `display_name`, `enabled`, `password`, `type`, `user_name`,attribute1,branch_id,contract_type,city_id,country_id) VALUES (b'1', b'1', b'1', 'مدير النظام', b'1', '$2a$10$.D0bhzx38KqXvf0coGi7deQqAx1M/ijDDjGnk0U3a4b7fI7ZoeSyu', 'ADMIN', 'admin','Jue0vN2USgM+XWpfBMRzTg==','1','PERMANENT','3','1');
-INSERT INTO `scef`.`user_details` (account_number,user_id) VALUES ('1','1');
-update `scef`.`user` set user_details_id = '1' where id = '1';
+INSERT INTO `user` (`account_non_expired`, `account_non_locked`, `credentials_non_expired`, `display_name`, `enabled`, `password`, `type`, `user_name`,attribute1,branch_id,contract_type,city_id,country_id) VALUES (b'1', b'1', b'1', 'مدير النظام', b'1', '$2a$10$.D0bhzx38KqXvf0coGi7deQqAx1M/ijDDjGnk0U3a4b7fI7ZoeSyu', 'ADMIN', 'admin','Jue0vN2USgM+XWpfBMRzTg==','1','PERMANENT','3','1');
+INSERT INTO user_details (account_number,user_id) VALUES ('1','1');
+update `user` set user_details_id = '1' where id = '1';
 INSERT INTO user_role (user_id, role_id,branch_id) VALUES ('1', '1','1');
