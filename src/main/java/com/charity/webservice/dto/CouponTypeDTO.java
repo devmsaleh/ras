@@ -2,6 +2,8 @@ package com.charity.webservice.dto;
 
 import java.math.BigDecimal;
 
+import com.charity.enums.CouponTypeEnum;
+
 public class CouponTypeDTO {
 
 	private String id;
@@ -17,6 +19,12 @@ public class CouponTypeDTO {
 	private String qrCode;
 
 	private int priority;
+
+	private CouponTypeEnum type = CouponTypeEnum.NORMAL;
+
+	private boolean favorite;
+
+	private int version;
 
 	public String getId() {
 		return id;
@@ -72,6 +80,30 @@ public class CouponTypeDTO {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	public CouponTypeEnum getType() {
+		return type;
+	}
+
+	public void setType(CouponTypeEnum type) {
+		this.type = type;
+	}
+
+	public boolean isFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 }

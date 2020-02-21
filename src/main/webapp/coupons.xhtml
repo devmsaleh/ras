@@ -45,7 +45,7 @@
             <div class="ui-g-12">
                 
                 
-				
+				<p:importEnum type="com.charity.enums.CouponTypeEnum" var="couponTypeEnum" allSuffix="ALL_ENUM_VALUES" />
 				<p:remoteCommand name="hideForm" partialSubmit="true" immediate="true" action="#{couponBean.hideForm()}"  update=":form:formPanel"/>
                 
 				<p:commandButton partialSubmit="true" id="addNewButton" action="#{couponBean.addNewButtonClicked}" immediate="true" update=":form:formPanel"  value="إضافة كوبون" icon="fa fa-plus" style="margin-top:10px;margin-bottom:10px;" />
@@ -113,10 +113,24 @@
 									itemValue="#{couponType}" />
 							</p:selectOneMenu>
 							
+							
+							
 							<p:outputLabel value="يجب إدخال متبرع" />
 			                <p:selectBooleanCheckbox value="#{couponBean.coupon.mustEnterDonator}" />
+			                <p:spacer />
+			                <p:spacer />
 			               
+			                
 			            </p:panelGrid>
+			            
+			            <p:panelGrid columns="2" styleClass="ui-noborder">
+			                <p:outputLabel value="النوع" />
+			                <p:selectOneRadio style="margin-right:62px"  value="#{couponBean.coupon.couponTypeEnum}">
+					            <f:selectItem itemLabel="عادى" itemValue="#{couponTypeEnum.NORMAL}" />
+					            <f:selectItem itemLabel="موسمي" itemValue="#{couponTypeEnum.YEARLY}" />
+					            <f:selectItem itemLabel="دفع سريع" itemValue="#{couponTypeEnum.QUICK_PAY}" />
+					        </p:selectOneRadio>
+					    </p:panelGrid>    
 			            
 			            <p:panelGrid id="uploadTable" columns="1" styleClass="ui-noborder">
 				            <p:fileUpload fileUploadListener="#{couponBean.handleFileUpload}" mode="advanced"

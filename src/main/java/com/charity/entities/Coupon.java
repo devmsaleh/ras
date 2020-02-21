@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +19,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.charity.enums.CouponTypeEnum;
 
 @Entity
 public class Coupon extends BaseEntity implements Serializable {
@@ -69,6 +73,11 @@ public class Coupon extends BaseEntity implements Serializable {
 
 	@Transient
 	private BigDecimal donationAmount;
+
+	private Integer version = 0;
+
+	@Enumerated(EnumType.STRING)
+	private CouponTypeEnum couponTypeEnum = CouponTypeEnum.NORMAL;
 
 	public Coupon() {
 
@@ -217,6 +226,24 @@ public class Coupon extends BaseEntity implements Serializable {
 
 	public void setDonationAmount(BigDecimal donationAmount) {
 		this.donationAmount = donationAmount;
+	}
+
+	public CouponTypeEnum getCouponTypeEnum() {
+		return couponTypeEnum;
+	}
+
+	public void setCouponTypeEnum(CouponTypeEnum couponTypeEnum) {
+		this.couponTypeEnum = couponTypeEnum;
+	}
+
+	public Integer getVersion() {
+		if (version == null)
+			version = 0;
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 }

@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.charity.entities.BankCheque;
 import com.charity.entities.BankTransfer;
 import com.charity.entities.Coupon;
+import com.charity.entities.DelegateCoupon;
 import com.charity.entities.Receipt;
 import com.charity.entities.ReceiptDetail;
 import com.charity.entities.User;
@@ -393,15 +396,25 @@ public class CharityWebService extends CharityServiceBase {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	@Path("/getCoupons")
+	@Path("/getCoupons/{delegateId}")
 	@ApiOperation(value = "عرض انواع الكوبونات")
-	public ServiceResponse getCoupons(@HeaderParam("token") String token, @HeaderParam("lang") String lang)
-			throws Exception {
+	public ServiceResponse getCoupons(@PathParam("delegateId") Long delegateId, @HeaderParam("token") String token,
+			@HeaderParam("lang") String lang) throws Exception {
 		try {
 
 			List<Coupon> couponsList = couponRepository.getAllCoupons();
-			logger.info("###### couponsList: " + couponsList.size());
+			List<DelegateCoupon> favoritesList = delegateCouponRepository.findByDelegateId(delegateId);
+
 			List<CouponTypeDTO> resultList = convertCouponListToDTO(couponsList);
+			for (CouponTypeDTO couponTypeDTO : resultList) {
+				for (DelegateCoupon delegateCoupon : favoritesList) {
+					if (delegateCoupon.getCouponId().toString().equals(couponTypeDTO.getId())) {
+						couponTypeDTO.setFavorite(true);
+					}
+				}
+			}
+			resultList.sort(Comparator.comparing(CouponTypeDTO::isFavorite).reversed());
+
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, resultList, errorCodeRepository, lang);
 		} catch (Exception e) {
 			logger.error("Exception in getCoupons webservice: ", e);
@@ -510,5 +523,47 @@ public class CharityWebService extends CharityServiceBase {
 				}
 		}
 		return result;
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	@Path("/addToFavorites/{delegateId}/{couponId}")
+	@ApiOperation(value = "اضافة كوبون الى المفضلة")
+	public ServiceResponse addToFavorites(@PathParam("delegateId") String delegateId,
+			@PathParam("couponId") String couponId, @HeaderParam("token") String token,
+			@HeaderParam("lang") String lang) throws Exception {
+		try {
+
+			// we should make unique constraint on delegateId+couponId
+			// also we should make check that coupoun is not already in favorites
+
+			DelegateCoupon delegateCoupon = new DelegateCoupon(new User(new BigInteger(delegateId).longValue()),
+					new Coupon(new BigInteger(couponId).longValue()));
+			delegateCouponRepository.save(delegateCoupon);
+			logger.info("######## addFavorite,id: " + delegateCoupon.getId());
+			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, new GeneralResponseDTO(true), errorCodeRepository,
+					lang);
+		} catch (Exception e) {
+			logger.error("Exception in addToFavorites webservice: ", e);
+			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	@Path("/removeFromFavorites/{delegateId}/{couponId}")
+	@ApiOperation(value = "إزالة كوبون من المفضلة")
+	public ServiceResponse removeFromFavorites(@PathParam("delegateId") String delegateId,
+			@PathParam("couponId") String couponId, @HeaderParam("token") String token,
+			@HeaderParam("lang") String lang) throws Exception {
+		try {
+			delegateCouponRepository.deleteByDelegateIdAndCouponId(new BigInteger(delegateId).longValue(),
+					new BigInteger(couponId).longValue());
+			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, new GeneralResponseDTO(true), errorCodeRepository,
+					lang);
+		} catch (Exception e) {
+			logger.error("Exception in removeFromFavorites webservice: ", e);
+			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
+		}
 	}
 }

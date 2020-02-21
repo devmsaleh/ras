@@ -177,6 +177,7 @@ public class CouponBean implements Serializable {
 			}
 			coupon.setLastModifier(currentUserBean.getUser());
 			coupon.setDateLastModified(new Date());
+			coupon.setVersion(coupon.getVersion() + 1);
 			couponRepository.save(coupon);
 			GeneralUtils.showDialogInfo("تم تحديث الكوبون بنجاح");
 		} catch (Exception e) {

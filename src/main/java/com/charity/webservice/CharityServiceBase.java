@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.charity.dao.BankChequeRepository;
 import com.charity.dao.BankTransferRepository;
 import com.charity.dao.CouponRepository;
+import com.charity.dao.DelegateCouponRepository;
 import com.charity.dao.ErrorCodeRepository;
 import com.charity.dao.ReceiptDetailsRepository;
 import com.charity.dao.ReceiptRepository;
@@ -30,6 +31,7 @@ import com.charity.entities.ReceiptDetail;
 import com.charity.entities.ReceiptPayment;
 import com.charity.entities.Region;
 import com.charity.entities.User;
+import com.charity.enums.CouponTypeEnum;
 import com.charity.enums.ErrorCodeEnum;
 import com.charity.enums.PaymentTypeEnum;
 import com.charity.enums.TransactionTypeEnum;
@@ -58,6 +60,9 @@ public class CharityServiceBase {
 
 	@Autowired
 	protected UserService userService;
+
+	@Autowired
+	protected DelegateCouponRepository delegateCouponRepository;
 
 	@Autowired
 	protected TokenRepository tokenRepository;
@@ -321,6 +326,12 @@ public class CharityServiceBase {
 		couponDTO.setPriority(coupon.getPriority());
 		couponDTO.setQrCode(coupon.getQrCode());
 		couponDTO.setValue(coupon.getValue());
+		couponDTO.setVersion(coupon.getVersion());
+		if (coupon.getCouponTypeEnum() == CouponTypeEnum.YEARLY) {
+			couponDTO.setType(CouponTypeEnum.YEARLY);
+		} else if (coupon.getCouponTypeEnum() == CouponTypeEnum.QUICK_PAY) {
+			couponDTO.setType(CouponTypeEnum.QUICK_PAY);
+		}
 		return couponDTO;
 	}
 
