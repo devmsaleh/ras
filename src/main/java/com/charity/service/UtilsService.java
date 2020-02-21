@@ -2,6 +2,7 @@ package com.charity.service;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -153,10 +154,14 @@ public class UtilsService {
 		return collectEntry;
 	}
 
-	public FinanceEntry createFinanceEntry(List<CollectEntry> collectEntriesList, Accountant accountant,
+	public FinanceEntry createFinanceEntry(List<CollectEntry> selectedCollectEntriesList, Accountant accountant,
 			User loggedInUser) {
 		FinanceEntry financeEntry = new FinanceEntry();
 		BigDecimal totalAmount = new BigDecimal(0);
+		List<CollectEntry> collectEntriesList = new ArrayList<CollectEntry>();
+		for (CollectEntry collectEntry : selectedCollectEntriesList) {
+			collectEntriesList.add(loadCollectEntryData(collectEntry.getId()));
+		}
 		for (CollectEntry collectEntry : collectEntriesList) {
 			totalAmount = totalAmount.add(collectEntry.getAmount());
 		}
@@ -169,12 +174,10 @@ public class UtilsService {
 			financeEntry.getCollectEntryList().add(new FinanceEntryCollectEntry(financeEntry, collectEntry));
 			collectEntry.setCollectedByFinance(true);
 			collectEntry.setDateCollectedByFinance(new Date());
-			// Hibernate.initialize(collectEntry.getReceiptsList());
+			Hibernate.initialize(collectEntry.getReceiptsList());
 			for (CollectEntryReceipt collectEntryReceipt : collectEntry.getReceiptsList()) {
-				// Hibernate.initialize(collectEntryReceipt.getReceipt().getReceiptDetailsList());
-				List<ReceiptDetail> receiptDetailsList = receiptDetailsRepository
-						.findByReceiptId(collectEntryReceipt.getId().getReceiptId());
-				financeEntry.getReceiptDetailsList().addAll(receiptDetailsList);
+				Hibernate.initialize(collectEntryReceipt.getReceipt().getReceiptDetailsList());
+				financeEntry.getReceiptDetailsList().addAll(collectEntryReceipt.getReceipt().getReceiptDetailsList());
 			}
 		}
 
