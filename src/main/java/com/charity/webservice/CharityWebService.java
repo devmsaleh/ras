@@ -47,6 +47,7 @@ import com.charity.enums.RoleTypeEnum;
 import com.charity.enums.UserTypeEnum;
 import com.charity.util.GeneralUtils;
 import com.charity.webservice.dto.BenefactorDTO;
+import com.charity.webservice.dto.CouponReportDTO;
 import com.charity.webservice.dto.CouponTypeDTO;
 import com.charity.webservice.dto.DelegateDTO;
 import com.charity.webservice.dto.GeneralResponseDTO;
@@ -54,6 +55,7 @@ import com.charity.webservice.dto.ReceiptDTO;
 import com.charity.webservice.dto.ReceiptPrintDTO;
 import com.charity.webservice.dto.ReceiptsReportDTO;
 import com.charity.webservice.dto.ServiceResponse;
+import com.charity.webservice.dto.SupervisorReportDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.Api;
@@ -325,6 +327,48 @@ public class CharityWebService extends CharityServiceBase {
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, receiptsReportDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
 			logger.error("Exception in findDelegateReceipts webservice: ", e);
+			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	@Path("/findDelegateNotCollectedCoupons/{delegateId}/{fromDate}/{toDate}")
+	@ApiOperation(value = "عرض الكوبونات الغير محصلة التى أنشأها مفوض فى فترة معينة")
+	public ServiceResponse findDelegateNotCollectedCoupons(@PathParam("delegateId") Long delegateId,
+			@PathParam("fromDate") String fromDateStr, @PathParam("toDate") String toDateStr,
+			@HeaderParam("token") String token, @HeaderParam("lang") String lang) throws Exception {
+		try {
+
+			Date fromDate = GeneralUtils.parseDate(fromDateStr);
+			Date toDate = GeneralUtils.parseDate(toDateStr);
+			toDate = DateUtils.setHours(toDate, 23);
+			toDate = DateUtils.setMinutes(toDate, 59);
+			toDate = DateUtils.setSeconds(toDate, 0);
+			List<ReceiptDetail> list = receiptDetailsRepository
+					.findByCreatedByIdAndReceiptCollectedAndCreationDateGreaterThanEqualAndCreationDateLessThanEqualOrderByIdAsc(
+							delegateId, false, fromDate, toDate);
+
+			List<CouponReportDTO> resultList = convertReceiptDetailsToCouponReportDTO(list, lang);
+			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, resultList, errorCodeRepository, lang);
+		} catch (Exception e) {
+			logger.error("Exception in findDelegatedReceipts webservice: ", e);
+			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
+		}
+	}
+
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	@Path("/findDelegateNotCollectedReceipts/{delegateId}")
+	@ApiOperation(value = "عرض المبالغ الغير محصلة عند المندوب")
+	public ServiceResponse findDelegateNotCollectedReceipts(@PathParam("delegateId") Long delegateId,
+			@HeaderParam("token") String token, @HeaderParam("lang") String lang) throws Exception {
+		try {
+
+			List<Receipt> list = receiptRepository.findByCollectedAndCreatedById(false, delegateId);
+			SupervisorReportDTO supervisorReportDTO = convertReceiptListToSupervisorReport(list);
+			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, supervisorReportDTO, errorCodeRepository, lang);
+		} catch (Exception e) {
+			logger.error("Exception in findDelegatedNotCollectedReceipts webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}

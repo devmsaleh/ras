@@ -40,6 +40,7 @@ import com.charity.service.UserService;
 import com.charity.service.UtilsService;
 import com.charity.util.GeneralUtils;
 import com.charity.webservice.dto.BenefactorDTO;
+import com.charity.webservice.dto.CouponReportDTO;
 import com.charity.webservice.dto.CouponTypeDTO;
 import com.charity.webservice.dto.DelegateDTO;
 import com.charity.webservice.dto.NewCouponDTO;
@@ -49,6 +50,7 @@ import com.charity.webservice.dto.ReceiptPaymentDTO;
 import com.charity.webservice.dto.ReceiptPrintDTO;
 import com.charity.webservice.dto.ReceiptsReportDTO;
 import com.charity.webservice.dto.ServiceResponse;
+import com.charity.webservice.dto.SupervisorReportDTO;
 
 @Service
 public class CharityServiceBase {
@@ -342,6 +344,46 @@ public class CharityServiceBase {
 			list.add(couponDTO);
 		}
 		return list;
+	}
+
+	public List<CouponReportDTO> convertReceiptDetailsToCouponReportDTO(List<ReceiptDetail> list, String lang) {
+		List<CouponReportDTO> resultList = new ArrayList<CouponReportDTO>();
+		for (ReceiptDetail receiptDetail : list) {
+			if (receiptDetail.getCouponId() != null && receiptDetail.getCouponId() > 0) {
+				Coupon coupon = utilsService.getCouponFromCache(receiptDetail.getCouponId());
+				CouponReportDTO couponReportDTONew = new CouponReportDTO(coupon, receiptDetail.getAmount());
+				if (!resultList.contains(couponReportDTONew)) {
+					resultList.add(couponReportDTONew);
+				} else {
+					CouponReportDTO couponReportDTOExisting = resultList.get(resultList.indexOf(couponReportDTONew));
+					couponReportDTOExisting
+							.setAmount(couponReportDTOExisting.getAmount().add(couponReportDTONew.getAmount()));
+				}
+			}
+		}
+		return resultList;
+	}
+
+	public SupervisorReportDTO convertReceiptListToSupervisorReport(List<Receipt> receiptList) {
+		SupervisorReportDTO supervisorReportDTO = new SupervisorReportDTO();
+		supervisorReportDTO.setDate(GeneralUtils.formatDateTime(new Date()));
+		for (Receipt receipt : receiptList) {
+			if (receipt.getPaymentType().equals(PaymentTypeEnum.CASH)) {
+				supervisorReportDTO.setCashAmount(supervisorReportDTO.getCashAmount().add(receipt.getTotalAmount()));
+				supervisorReportDTO.setCashReceiptsCount(supervisorReportDTO.getCashReceiptsCount() + 1);
+			} else if (receipt.getPaymentType().equals(PaymentTypeEnum.CHEQUE)) {
+				supervisorReportDTO
+						.setChequeAmount(supervisorReportDTO.getChequeAmount().add(receipt.getTotalAmount()));
+				supervisorReportDTO.setChequeReceiptsCount((supervisorReportDTO.getChequeReceiptsCount() + 1));
+			} else if (receipt.getPaymentType().equals(PaymentTypeEnum.CREDIT)) {
+				supervisorReportDTO
+						.setCreditCardAmount(supervisorReportDTO.getCreditCardAmount().add(receipt.getTotalAmount()));
+				supervisorReportDTO.setCreditCardReceiptsCount((supervisorReportDTO.getCreditCardReceiptsCount() + 1));
+			}
+			supervisorReportDTO.setTotalAmount(supervisorReportDTO.getCashAmount()
+					.add(supervisorReportDTO.getChequeAmount()).add(supervisorReportDTO.getCreditCardAmount()));
+		}
+		return supervisorReportDTO;
 	}
 
 }
