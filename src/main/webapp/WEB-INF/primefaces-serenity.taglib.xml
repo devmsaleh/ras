@@ -60,7 +60,6 @@
 			<name>closeDelay</name>
 			<required>false</required>
 			<type>java.lang.Integer</type>
-            <defaultValue>250</defaultValue>
 		</attribute>
 	</tag>
 </facelet-taglib>
