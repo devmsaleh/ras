@@ -148,6 +148,7 @@ public class CharityServiceBase {
 		receipt.setPaymentType(receiptDTO.getPaymentType());
 		User benefactor = null;
 		User delegate = userService.findById(receiptDTO.getDelegateId());
+		logger.info("########### CREATE RECEIPT,BENEFACTOR: " + receiptDTO.getBenefactor());
 		if (!GeneralUtils.isEmptyNumber(receiptDTO.getBenefactor().getId())) {
 			logger.info("########### CREATE RECEIPT,OLD BENEFACTOR: " + receiptDTO.getBenefactor());
 			benefactor = userService.findById(receiptDTO.getBenefactor().getId());

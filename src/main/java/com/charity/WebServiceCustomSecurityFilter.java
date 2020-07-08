@@ -36,7 +36,8 @@ public class WebServiceCustomSecurityFilter extends GenericFilterBean {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		logger.info("######### WebServiceCustomSecurityFilter > " + request.getRequestURI());
+		// logger.info("######### WebServiceCustomSecurityFilter > " +
+		// request.getRequestURI());
 		if (isAllowedUrl(request.getRequestURI())) {
 			// logger.info("######### WebServiceCustomSecurityFilter > login service >
 			// chain.doFilter");
