@@ -11,9 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -252,11 +254,19 @@ public class UserService {
 	}
 
 	public boolean isAuthenticated(String userName, String password) {
-		UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-				userDetails, password, userDetails.getAuthorities());
-		Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-		return authentication.isAuthenticated();
+		UserDetails userDetails = null;
+		try {
+			userDetails = userDetailsService.loadUserByUsername(userName);
+			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+					userDetails, password, userDetails.getAuthorities());
+			Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+			return authentication.isAuthenticated();
+		} catch (UsernameNotFoundException unf) {
+			return false;
+		} catch (BadCredentialsException bce) {
+			return false;
+		}
+
 	}
 
 	public User authenticate(String userName, String password) {

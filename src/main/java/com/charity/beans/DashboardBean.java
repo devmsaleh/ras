@@ -95,7 +95,8 @@ public class DashboardBean implements Serializable {
 				BigDecimal delegateNotCollectedAmount = null;
 				ReceiptDashboard receiptDashboardExist = isDelegateExists(receipt.getDelegate().getId());
 				if (receiptDashboardExist != null) {
-					log.info("######## receiptDashboardExist for delegate: " + receipt.getDelegate().getId());
+					// log.info("######## receiptDashboardExist for delegate: " +
+					// receipt.getDelegate().getId());
 					delegateNotCollectedAmount = receiptDashboardExist.getDelegateNotCollectedAmount();
 				} else {
 					delegateNotCollectedAmount = receiptRepository

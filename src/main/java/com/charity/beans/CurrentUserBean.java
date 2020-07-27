@@ -49,10 +49,11 @@ public class CurrentUserBean implements Serializable {
 	}
 
 	private void loadUserData() {
-		log.info("########### loadUserData,user: " + user + ",getLoggedInUserId(): " + getLoggedInUserId());
+		// log.info("########### loadUserData,user: " + user + ",getLoggedInUserId(): "
+		// + getLoggedInUserId());
 		if (user == null && !getLoggedInUserId().equalsIgnoreCase("anonymousUser")) {
 			user = userService.findByUserNameIgnoreCase(getLoggedInUserId());
-			log.info("########## found user,roles: " + user.getRoles().size());
+			// log.info("########## found user,roles: " + user.getRoles().size());
 			admin = hasRole(RoleTypeEnum.ROLE_ADMIN);
 			employee = hasRole(RoleTypeEnum.ROLE_EMPLOYEE);
 			hasAllBranches = user.getBranchPermissionType() == BranchPermissionTypeEnum.ALL_BRANCHES;
