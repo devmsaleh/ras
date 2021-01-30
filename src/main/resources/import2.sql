@@ -46,7 +46,7 @@ INSERT INTO user_details (account_number,user_id) VALUES ('1','1');
 update `user` set user_details_id = '1' where id = '1';
 INSERT INTO user_role (user_id, role_id,branch_id) VALUES ('1', '1','1');
 
-----------------
+
 
 Insert into ERROR_CODE (ID,ACTIVE,ERROR_CODE,ERROR_NAME_ARABIC,ERROR_NAME_ENGLISH) values (0,1,'SUCCESS_CODE','تمت العملية نجاح','Success');
 Insert into ERROR_CODE (ID,ACTIVE,ERROR_CODE,ERROR_NAME_ARABIC,ERROR_NAME_ENGLISH) values (-1,1,'SYSTEM_ERROR_CODE','خطأ غير متوقع','System error');

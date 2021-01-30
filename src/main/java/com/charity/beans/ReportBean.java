@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.charity.dao.CouponRepository;
+import com.charity.dao.ReceiptDetailsRepository;
 import com.charity.dao.UserRepository;
 import com.charity.dao.UtilsRepository;
 import com.charity.dto.DelegateIncomeReportDTO;
@@ -51,6 +52,9 @@ public class ReportBean implements Serializable {
 	@Autowired
 	private UtilsRepository utilsRepository;
 
+	@Autowired
+	private ReceiptDetailsRepository receiptDetailsRepository;
+
 	private Date fromDate;
 
 	private Date toDate = new Date();
@@ -75,7 +79,7 @@ public class ReportBean implements Serializable {
 
 	private List<User> benefactorsList = new ArrayList<User>();
 
-	private List<User> filteredBenefactorsList = new ArrayList<User>();
+	private List<User> filteredBenefactorsList;
 
 	@PostConstruct
 	public void init() {
@@ -107,7 +111,9 @@ public class ReportBean implements Serializable {
 				benefactorsList = userService.findAllBenefactors();
 				if (benefactorsList != null) {
 					log.info("############ benefactorsList: " + benefactorsList.size());
-					filteredBenefactorsList.addAll(benefactorsList);
+					for (User user : benefactorsList) {
+						user.setCoupounsList(receiptDetailsRepository.findBenefactorCoupouns(user.getId()));
+					}
 				}
 			}
 

@@ -68,6 +68,10 @@ public class GeneralUtils {
 
 	}
 
+	public static String getNewLine() {
+		return System.getProperty("line.separator");
+	}
+
 	public static String formatDate(Date date) {
 		if (date == null)
 			return "";

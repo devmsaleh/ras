@@ -20,7 +20,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(CharityWebService.class);
 
 		BeanConfig swaggerConfig = new BeanConfig();
-		swaggerConfig.setBasePath("/ras/api");
+		swaggerConfig.setBasePath("/rak/api");
 		SwaggerConfigLocator.getInstance().putConfig(SwaggerContextService.CONFIG_ID_DEFAULT, swaggerConfig);
 
 		packages(getClass().getPackage().getName(), ApiListingResource.class.getPackage().getName());

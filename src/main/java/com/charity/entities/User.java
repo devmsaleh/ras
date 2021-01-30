@@ -2,8 +2,10 @@ package com.charity.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -22,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -188,6 +191,11 @@ public class User extends BaseEntity implements Serializable {
 
 	@Transient
 	private String dateCreatedStr;
+
+	@Transient
+	private List<String> coupounsList = new ArrayList<String>();
+
+	private String coupounsListStr;
 
 	public User(UserTypeEnum userTypeEnum) {
 		this.type = userTypeEnum;
@@ -696,6 +704,34 @@ public class User extends BaseEntity implements Serializable {
 
 	public void setDateCreatedStr(String dateCreatedStr) {
 		this.dateCreatedStr = dateCreatedStr;
+	}
+
+	public List<String> getCoupounsList() {
+		return coupounsList;
+	}
+
+	public void setCoupounsList(List<String> coupounsList) {
+		this.coupounsList = coupounsList;
+	}
+
+	public String getCoupounsListStr() {
+		if (StringUtils.isBlank(coupounsListStr) && coupounsList != null) {
+			StringBuffer sb = new StringBuffer();
+			int index = 0;
+			for (String str : coupounsList) {
+				if (coupounsList.size() > 1) {
+					index++;
+					sb.append(index).append("- ");
+				}
+				sb.append(str).append(GeneralUtils.getNewLine());
+			}
+			coupounsListStr = sb.toString();
+		}
+		return coupounsListStr;
+	}
+
+	public void setCoupounsListStr(String coupounsListStr) {
+		this.coupounsListStr = coupounsListStr;
 	}
 
 }
