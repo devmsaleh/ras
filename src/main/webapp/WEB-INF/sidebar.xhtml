@@ -40,6 +40,7 @@
                             <p:submenu  label="التقارير" icon="&#xe24b;" rendered="#{currentUserBean.admin or currentUserBean.hasReportsRole}">
                                 <p:menuitem  value="إيراد المندوبين إجمالي" rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_DELEGATES_INCOME)}" icon="&#xE233;" outcome="/delegatesIncomeTotal"/>
                                 <p:menuitem  value="بيانات المحسنين"  rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_BENEFACTORS)}" icon="&#xE233;" outcome="/benefactorsReport"/>
+                                <p:menuitem  value="بيانات المحسنين تفصيلي"  rendered="#{currentUserBean.admin or currentUserBean.hasRole(roleTypeEnum.ROLE_REPORT_BENEFACTORS)}" icon="&#xE233;" outcome="/benefactorsReportDetailed"/>
                             </p:submenu>
                             <p:menuitem  value="تسجيل خروج" icon="&#xE8AC;" url="#{request.contextPath}/logout" />  
                         </pm:menu>

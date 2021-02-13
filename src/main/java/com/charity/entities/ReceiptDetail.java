@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.charity.enums.PaymentTypeEnum;
+import com.charity.util.GeneralUtils;
 
 @Entity
 public class ReceiptDetail extends BaseEntity implements Serializable {
@@ -34,6 +35,9 @@ public class ReceiptDetail extends BaseEntity implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate = new Date();
+
+	@Transient
+	private String dateCreatedStr;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private User createdBy;
@@ -408,6 +412,15 @@ public class ReceiptDetail extends BaseEntity implements Serializable {
 
 	public void setReceiptId(Long receiptId) {
 		this.receiptId = receiptId;
+	}
+
+	public String getDateCreatedStr() {
+		dateCreatedStr = GeneralUtils.formatDateTime(creationDate);
+		return dateCreatedStr;
+	}
+
+	public void setDateCreatedStr(String dateCreatedStr) {
+		this.dateCreatedStr = dateCreatedStr;
 	}
 
 }

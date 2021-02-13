@@ -24,6 +24,7 @@ import com.charity.dao.UserRepository;
 import com.charity.dao.UtilsRepository;
 import com.charity.dto.DelegateIncomeReportDTO;
 import com.charity.entities.Coupon;
+import com.charity.entities.ReceiptDetail;
 import com.charity.entities.User;
 import com.charity.service.UserService;
 import com.charity.util.Encryptor;
@@ -81,6 +82,10 @@ public class ReportBean implements Serializable {
 
 	private List<User> filteredBenefactorsList;
 
+	private List<ReceiptDetail> receiptDetailsList = new ArrayList<ReceiptDetail>();
+
+	private List<ReceiptDetail> filteredReceiptDetailsList;
+
 	@PostConstruct
 	public void init() {
 		try {
@@ -115,6 +120,9 @@ public class ReportBean implements Serializable {
 						user.setCoupounsList(receiptDetailsRepository.findBenefactorCoupouns(user.getId()));
 					}
 				}
+			} else if (GeneralUtils.getHttpServletRequest().getRequestURI()
+					.contains("benefactorsReportDetailed.xhtml")) {
+				receiptDetailsList = receiptDetailsRepository.findByBenefactorIdNotNullOrderByIdDesc();
 			}
 
 		} catch (Exception e) {
@@ -258,5 +266,21 @@ public class ReportBean implements Serializable {
 
 	public void setFilteredBenefactorsList(List<User> filteredBenefactorsList) {
 		this.filteredBenefactorsList = filteredBenefactorsList;
+	}
+
+	public List<ReceiptDetail> getReceiptDetailsList() {
+		return receiptDetailsList;
+	}
+
+	public void setReceiptDetailsList(List<ReceiptDetail> receiptDetailsList) {
+		this.receiptDetailsList = receiptDetailsList;
+	}
+
+	public List<ReceiptDetail> getFilteredReceiptDetailsList() {
+		return filteredReceiptDetailsList;
+	}
+
+	public void setFilteredReceiptDetailsList(List<ReceiptDetail> filteredReceiptDetailsList) {
+		this.filteredReceiptDetailsList = filteredReceiptDetailsList;
 	}
 }

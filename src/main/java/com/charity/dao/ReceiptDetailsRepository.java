@@ -24,4 +24,6 @@ public interface ReceiptDetailsRepository extends JpaRepository<ReceiptDetail, L
 
 	@Query(value = "select distinct name from ReceiptDetail where benefactor.id=:benefactorId order by name")
 	List<String> findBenefactorCoupouns(@Param("benefactorId") Long benefactorId);
+
+	List<ReceiptDetail> findByBenefactorIdNotNullOrderByIdDesc();
 }

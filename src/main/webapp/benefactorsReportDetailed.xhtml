@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">تقرير المحسنين تفصيلي</ui:define>
+    
+    <ui:define name="head">
+       <script type="text/javascript">    
+		    PrimeFaces.locales['ar'] = {
+		        closeText: 'إغلاق',
+		        prevText: 'السابق',
+		        nextText: 'التالي',
+		        monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+		        monthNamesShort: ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر' ],
+		        dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesShort: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+		        dayNamesMin: ['الأحد', 'الاثنين', 'الثلاثاء', 'الاربعاء ', 'الخميس', 'الجمعة ', 'السبت'],
+		        weekHeader: 'الاسبوع',
+		        FirstDay: 1,
+		        isRTL: false,
+		        showMonthAfterYear: false,
+		        yearSuffix: '',
+		        timeOnlyTitle: 'الوقت فقط',
+		        timeText: 'الوقت',
+		        hourText: 'ساعة',
+		        minuteText: 'دقيقة',
+		        secondText: 'ثانية',
+		        currentText: 'تاريخ اليوم',
+		        ampm: false,
+		        month: 'شهر',
+		        week: 'اسبوع',
+		        day: 'يوم',
+		        allDayText: 'طوال اليوم'
+		    };
+		</script>
+    </ui:define>
+
+    <ui:define name="content">
+    
+        <h:form id="form">
+        <div class="ui-g" dir="rtl">
+            <div class="ui-g-12">
+                
+                 
+				
+				<p:outputPanel  id="formContainer">
+	                <p:panel styleClass="card customInputs" style="padding-right:5%;">
+                        
+                        <h1>تقرير المحسنين تفصيلي</h1>
+			            
+			            <p:growl id="growl"  life="3000" />
+			            
+			            <p:dataTable id="benefactors" value="#{reportBean.receiptDetailsList}" var="receiptDetail" paginator="true" rows="10" 
+			             paginatorAlwaysVisible="false" emptyMessage="لا يوجد محسنين"
+			             filteredValue="#{reportBean.filteredReceiptDetailsList}">
+			
+							<p:column style="text-align:center" headerText="إسم المحسن" filterBy="#{receiptDetail.benefactor.displayName}" sortBy="#{receiptDetail.benefactor.displayName}" filterMatchMode="contains">
+								<h:outputText value="#{receiptDetail.benefactor.displayName}" />
+							</p:column>
+						 
+						    <p:column style="text-align:center" headerText="رقم الجوال" filterBy="#{receiptDetail.benefactor.mobileNumber}" sortBy="#{receiptDetail.benefactor.mobileNumber}" filterMatchMode="startsWith">
+								<h:outputText value="#{receiptDetail.benefactor.mobileNumber}" />
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="تاريخ العملية" filterBy="#{receiptDetail.dateCreatedStr}" sortBy="#{receiptDetail.dateCreated}" filterMatchMode="startsWith">
+								<h:outputText value="#{receiptDetail.dateCreatedStr}" />
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="الكوبون" filterBy="#{receiptDetail.name}" sortBy="#{receiptDetail.name}" filterMatchMode="contains">
+								<h:outputLabel style="white-space: pre;" value="#{receiptDetail.name}" />
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="المبلغ" filterBy="#{receiptDetail.amount}" sortBy="#{receiptDetail.amount}" filterMatchMode="startsWith">
+								<h:outputLabel value="#{receiptDetail.amount}" />
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="اسم المندوب" filterBy="#{receiptDetail.createdBy.displayName}" sortBy="#{receiptDetail.createdBy.displayName}" filterMatchMode="contains">
+								<h:outputText value="#{receiptDetail.createdBy.displayName}" />
+							</p:column>
+							
+							
+						</p:dataTable>
+						
+						
+						
+						<h:panelGroup layout="block" id="exportDiv" style="text-align:center">
+							<h:commandLink>
+								<h:graphicImage value="/resources/images/excel.png" width="50" height="50" style="border:none;"/>
+								<p:dataExporter type="xls" target="benefactors" fileName="benefactors" />
+							</h:commandLink>
+						</h:panelGroup>
+			           
+	                    
+	                </p:panel>
+                </p:outputPanel>
+                
+                
+            </div>
+            
+            
+        </div>
+        
+        
+		  
+        </h:form>
+    </ui:define>
+
+</ui:composition>
