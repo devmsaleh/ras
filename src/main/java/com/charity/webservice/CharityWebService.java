@@ -34,6 +34,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.charity.dto.ValidateCreateReceiptResult;
 import com.charity.entities.BankCheque;
 import com.charity.entities.BankTransfer;
 import com.charity.entities.Coupon;
@@ -218,11 +219,15 @@ public class CharityWebService extends CharityServiceBase {
 			@HeaderParam("lang") String lang) throws Exception {
 		try {
 
-			ErrorCodeEnum errorCode = validation.validateCreateReceipt(receiptDTO);
+			ValidateCreateReceiptResult result = validation.validateCreateReceipt(receiptDTO);
+			ErrorCodeEnum errorCode = result.getErrorCode();
 			if (isError(errorCode)) {
 				logger.info("createReceipt Error " + errorCode.intValue() + " , JSON: "
 						+ (new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(receiptDTO)));
-				return new ServiceResponse(errorCode, errorCodeRepository, lang);
+				ServiceResponse serviceResponse = new ServiceResponse(errorCode, errorCodeRepository, lang);
+				if (result.getCoupon() != null)
+					serviceResponse.setCouponName(result.getCoupon().getName());
+				return serviceResponse;
 			}
 
 			Receipt receipt = convertReceipDTOToReceipt(receiptDTO);

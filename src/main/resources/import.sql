@@ -100,3 +100,4 @@ Insert into ERROR_CODE (ID,ACTIVE,ERROR_CODE,ERROR_NAME_ARABIC,ERROR_NAME_ENGLIS
 Insert into ERROR_CODE (ID,ACTIVE,ERROR_CODE,ERROR_NAME_ARABIC,ERROR_NAME_ENGLISH) values (49,1,'ORPHAN_AMOUNT_OR_GIFT_REQUIRED','يرجى ادخال مبلغ الكفالة او الهدية','Please enter sponsorship amount or gift amount');
 Insert into ERROR_CODE (ID,ACTIVE,ERROR_CODE,ERROR_NAME_ARABIC,ERROR_NAME_ENGLISH) values (50,1,'COUPON_QRCODE_NOT_EXIST','كود الكوبون غير موجود','Coupon QR code does not exist');
 Insert into ERROR_CODE (ID,ACTIVE,ERROR_CODE,ERROR_NAME_ARABIC,ERROR_NAME_ENGLISH) values (51,1,'NO_PERMISSION_TO_USE_MOBILE','ليس لديك صلاحية لاستخدام التطبيق','User does not have permission to use mobile');
+Insert into ERROR_CODE (ID,ACTIVE,ERROR_CODE,ERROR_NAME_ARABIC,ERROR_NAME_ENGLISH) values (52,1,'COUPON_TYPE_NOT_ACTIVE','الكوبون {0} غير فعال ولا يمكن استخدامه فى التبرع','Coupon {0} is not active and cannot be used');

@@ -10,12 +10,15 @@ import org.slf4j.LoggerFactory;
 import com.charity.dao.ErrorCodeRepository;
 import com.charity.entities.ErrorCode;
 import com.charity.enums.ErrorCodeEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ServiceResponse {
 
 	protected ErrorCodeEnum errorCode;
+	@JsonIgnore
+	protected String couponName;
 	protected String errorCodeDesc;
 	protected int errorCodeValue = ErrorCodeEnum.SYSTEM_ERROR_CODE.intValue();
 	protected Map<String, Object> response;
@@ -122,6 +125,10 @@ public class ServiceResponse {
 				return errorCode + "";
 			errorCodeDesc = this.lang == null || this.lang.equals("ar") ? err.getErrorNameArabic()
 					: err.getErrorNameEnglish();
+
+			if (errorCode == ErrorCodeEnum.COUPON_TYPE_NOT_ACTIVE && StringUtils.isNotBlank(couponName)) {
+				errorCodeDesc = errorCodeDesc.replace("{0}", couponName);
+			}
 		}
 		if (StringUtils.isBlank(errorCodeDesc))
 			return errorCode + "";
@@ -150,6 +157,14 @@ public class ServiceResponse {
 			return super.toString();
 		}
 
+	}
+
+	public String getCouponName() {
+		return couponName;
+	}
+
+	public void setCouponName(String couponName) {
+		this.couponName = couponName;
 	}
 
 }

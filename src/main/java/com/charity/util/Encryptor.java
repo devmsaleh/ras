@@ -119,6 +119,6 @@ public class Encryptor {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(decrypt("W+ATwt4ocReqruPLd3bFnQ=="));
+		System.out.println(decrypt("aP0b+OwuW+WANdDZ3La3uw=="));
 	}
 }

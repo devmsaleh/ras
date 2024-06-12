@@ -82,7 +82,7 @@ public class UtilsService {
 				return coupon;
 			}
 		}
-		Coupon coupon = couponRepository.getOne(couponId);
+		Coupon coupon = couponRepository.findById(couponId).orElse(null);
 		if (coupon == null)
 			coupon = new Coupon();
 		return coupon;

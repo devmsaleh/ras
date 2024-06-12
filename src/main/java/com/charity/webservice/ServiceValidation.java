@@ -7,6 +7,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import com.charity.dto.ValidateCreateReceiptResult;
 import com.charity.entities.Coupon;
 import com.charity.enums.ErrorCodeEnum;
 import com.charity.enums.PaymentTypeEnum;
@@ -18,27 +19,32 @@ import com.charity.webservice.dto.ReceiptPaymentDTO;
 @Component
 public class ServiceValidation extends CharityServiceBase {
 
-	public ErrorCodeEnum validateCreateReceipt(ReceiptDTO receiptDTO) {
+	public ValidateCreateReceiptResult validateCreateReceipt(ReceiptDTO receiptDTO) {
 
 		ErrorCodeEnum errorCode = validateReceiptPayment(receiptDTO);
 		if (isError(errorCode)) {
-			return errorCode;
+			return new ValidateCreateReceiptResult(errorCode);
 		}
 
 		if (CollectionUtils.isNotEmpty(receiptDTO.getCouponsList())) {
 			for (NewCouponDTO couponDTO : receiptDTO.getCouponsList()) {
-				errorCode = validateNewCoupon(couponDTO, receiptDTO.getBenefactor().getName());
+				errorCode = validateCouponData(couponDTO, receiptDTO.getBenefactor().getName());
 				if (isError(errorCode)) {
-					return errorCode;
+					if (errorCode == ErrorCodeEnum.COUPON_TYPE_NOT_ACTIVE) {
+						Coupon coupon = utilsService.getCouponFromCache(couponDTO.getCouponTypeId());
+						return new ValidateCreateReceiptResult(errorCode, coupon);
+					} else {
+						return new ValidateCreateReceiptResult(errorCode);
+					}
 				}
 			}
 		}
 
-		return ErrorCodeEnum.SUCCESS_CODE;
+		return new ValidateCreateReceiptResult(ErrorCodeEnum.SUCCESS_CODE);
 
 	}
 
-	public ErrorCodeEnum validateNewCoupon(NewCouponDTO newCouponDTO, String donatorName) {
+	public ErrorCodeEnum validateCouponData(NewCouponDTO newCouponDTO, String donatorName) {
 
 		if (GeneralUtils.isEmptyNumber(newCouponDTO.getAmount())) {
 			return ErrorCodeEnum.COUPON_AMOUNT_REQUIRED;
@@ -51,6 +57,10 @@ public class ServiceValidation extends CharityServiceBase {
 		Coupon coupon = utilsService.getCouponFromCache(newCouponDTO.getCouponTypeId());
 		if (coupon == null || coupon.getId() == null) {
 			return ErrorCodeEnum.COUPON_TYPE_NOT_EXIST;
+		}
+
+		if (!coupon.isActive()) {
+			return ErrorCodeEnum.COUPON_TYPE_NOT_ACTIVE;
 		}
 
 		BigDecimal minimumAmount = coupon.getMinimumAmount();

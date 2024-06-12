@@ -186,6 +186,7 @@ public class CharityServiceBase {
 				receiptDetail = new ReceiptDetail();
 				receiptDetail.setNotes(couponDTO.getNotes());
 				receiptDetail.setReceipt(receipt);
+				receiptDetail.setPaymentType(receiptDTO.getPaymentType());
 				receiptDetail.setAmount(couponDTO.getAmount());
 				receiptDetail.setCreatedBy(receipt.getCreatedBy());
 				receiptDetail.setCoupon(new Coupon(couponDTO.getCouponTypeId()));
