@@ -68,7 +68,7 @@ import io.swagger.annotations.ApiOperation;
 @Transactional
 public class CharityWebService extends CharityServiceBase {
 
-	private static final Logger logger = LoggerFactory.getLogger(CharityWebService.class);
+	private static final Logger log = LoggerFactory.getLogger(CharityWebService.class);
 
 	@Value("${environment}")
 	private String environmentStr;
@@ -80,10 +80,10 @@ public class CharityWebService extends CharityServiceBase {
 	public ServiceResponse login(@HeaderParam("userName") String userName, @HeaderParam("password") String password,
 			@HeaderParam("lang") String lang) throws Exception {
 		try {
-			logger.info("############# CharityWebService > login ################");
+			log.info("############# CharityWebService > login ################");
 			User delegate = userService.authenticate(userName, password);
 			if (delegate != null) {
-				logger.info("############# delegate.isEnabled(): " + delegate.isEnabled());
+				log.info("############# delegate.isEnabled(): " + delegate.isEnabled());
 			}
 			if (delegate == null) {
 				return new ServiceResponse(ErrorCodeEnum.WRONG_CREDENTIALS, errorCodeRepository, lang);
@@ -103,7 +103,7 @@ public class CharityWebService extends CharityServiceBase {
 			DelegateDTO delegateDTO = convertDelegateToDTO(delegate);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, delegateDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in login webservice: ", e);
+			log.error("Exception in login webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -115,10 +115,10 @@ public class CharityWebService extends CharityServiceBase {
 	public ServiceResponse loginLocation(@HeaderParam("userName") String userName,
 			@HeaderParam("password") String password, @HeaderParam("lang") String lang) throws Exception {
 		try {
-			logger.info("############# CharityWebService > login ################");
+			log.info("############# CharityWebService > login ################");
 			User delegate = userService.authenticate(userName, password);
 			if (delegate != null) {
-				logger.info("############# delegate.isEnabled(): " + delegate.isEnabled());
+				log.info("############# delegate.isEnabled(): " + delegate.isEnabled());
 			}
 			if (delegate == null) {
 				return new ServiceResponse(ErrorCodeEnum.WRONG_CREDENTIALS, errorCodeRepository, lang);
@@ -138,7 +138,7 @@ public class CharityWebService extends CharityServiceBase {
 			DelegateDTO delegateDTO = convertDelegateToDTO(delegate);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, delegateDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in login webservice: ", e);
+			log.error("Exception in login webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -155,7 +155,7 @@ public class CharityWebService extends CharityServiceBase {
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, new GeneralResponseDTO(true), errorCodeRepository,
 					lang);
 		} catch (Exception e) {
-			logger.error("Exception in logout webservice: ", e);
+			log.error("Exception in logout webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -173,7 +173,7 @@ public class CharityWebService extends CharityServiceBase {
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, new GeneralResponseDTO(true), errorCodeRepository,
 					lang);
 		} catch (Exception e) {
-			logger.error("Exception in changePassword webservice: ", e);
+			log.error("Exception in changePassword webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -189,7 +189,7 @@ public class CharityWebService extends CharityServiceBase {
 			List<BankCheque> banksList = bankChequeRepository.findAll();
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, banksList, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in getBanksForCheque webservice: ", e);
+			log.error("Exception in getBanksForCheque webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -205,7 +205,7 @@ public class CharityWebService extends CharityServiceBase {
 			List<BankTransfer> banksList = bankTransferRepository.findAll();
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, banksList, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in getBanksForTransfer webservice: ", e);
+			log.error("Exception in getBanksForTransfer webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -222,7 +222,7 @@ public class CharityWebService extends CharityServiceBase {
 			ValidateCreateReceiptResult result = validation.validateCreateReceipt(receiptDTO);
 			ErrorCodeEnum errorCode = result.getErrorCode();
 			if (isError(errorCode)) {
-				logger.info("createReceipt Error " + errorCode.intValue() + " , JSON: "
+				log.info("createReceipt Error " + errorCode.intValue() + " , JSON: "
 						+ (new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(receiptDTO)));
 				ServiceResponse serviceResponse = new ServiceResponse(errorCode, errorCodeRepository, lang);
 				if (result.getCoupon() != null)
@@ -251,8 +251,8 @@ public class CharityWebService extends CharityServiceBase {
 			}
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, receiptPrintDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in createReceipt webservice: ", e);
-			logger.error("Exception in createReceipt webservice, JSON: "
+			log.error("Exception in createReceipt webservice: ", e);
+			log.error("Exception in createReceipt webservice, JSON: "
 					+ (new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(receiptDTO)));
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
@@ -269,7 +269,7 @@ public class CharityWebService extends CharityServiceBase {
 			CouponTypeDTO couponTypeDTO = convertCouponToDTO(couponType);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, couponTypeDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findCouponByBarcode webservice for barcode: " + barcode + ",Exception is: ", e);
+			log.error("Exception in findCouponByBarcode webservice for barcode: " + barcode + ",Exception is: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -283,11 +283,11 @@ public class CharityWebService extends CharityServiceBase {
 		try {
 
 			List<Coupon> couponsList = couponRepository.findByNameStartingWithAndActiveTrue(name);
-			logger.info("###### findCoupons,couponsList: " + couponsList.size());
+			log.info("###### findCoupons,couponsList: " + couponsList.size());
 			List<CouponTypeDTO> resultList = convertCouponListToDTO(couponsList);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, resultList, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findCoupons webservice: ", e);
+			log.error("Exception in findCoupons webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -304,7 +304,7 @@ public class CharityWebService extends CharityServiceBase {
 			ReceiptPrintDTO receiptPrintDTO = getReceiptPrint(receipt, lang, false);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, receiptPrintDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findReceiptDetails webservice: ", e);
+			log.error("Exception in findReceiptDetails webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -331,7 +331,7 @@ public class CharityWebService extends CharityServiceBase {
 			ReceiptsReportDTO receiptsReportDTO = convertReceiptDetailsToReceiptsReportDTO(list, lang);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, receiptsReportDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findDelegateReceipts webservice: ", e);
+			log.error("Exception in findDelegateReceipts webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -357,7 +357,7 @@ public class CharityWebService extends CharityServiceBase {
 			List<CouponReportDTO> resultList = convertReceiptDetailsToCouponReportDTO(list, lang);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, resultList, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findDelegatedReceipts webservice: ", e);
+			log.error("Exception in findDelegatedReceipts webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -373,7 +373,7 @@ public class CharityWebService extends CharityServiceBase {
 			SupervisorReportDTO supervisorReportDTO = convertReceiptListToSupervisorReport(list);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, supervisorReportDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findDelegatedNotCollectedReceipts webservice: ", e);
+			log.error("Exception in findDelegatedNotCollectedReceipts webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -392,7 +392,7 @@ public class CharityWebService extends CharityServiceBase {
 			}
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, amount, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findDelegateTotalAmount webservice: ", e);
+			log.error("Exception in findDelegateTotalAmount webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -409,7 +409,7 @@ public class CharityWebService extends CharityServiceBase {
 			ReceiptPrintDTO receiptPrintDTO = getReceiptPrint(receipt, lang, false);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, receiptPrintDTO, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findReceiptDetails webservice: ", e);
+			log.error("Exception in findReceiptDetails webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -438,7 +438,7 @@ public class CharityWebService extends CharityServiceBase {
 			return Response.ok(image, mimeType)
 					.header("Content-Disposition", "attachment; filename=\"" + fileName + "\"").build();
 		} catch (Exception e) {
-			logger.error("Exception in getCouponImage webservice: ", e);
+			log.error("Exception in getCouponImage webservice: ", e);
 			return Response.serverError().build();
 		}
 	}
@@ -466,7 +466,7 @@ public class CharityWebService extends CharityServiceBase {
 
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, resultList, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in getCoupons webservice: ", e);
+			log.error("Exception in getCoupons webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -483,21 +483,24 @@ public class CharityWebService extends CharityServiceBase {
 			if (StringUtils.isNotBlank(searchText)) {
 				searchText = searchText.trim();
 				if (StringUtils.isAlpha(searchText) || StringUtils.containsWhitespace(searchText)) {
-					logger.info("######### findBenefactor by name,searchText: " + searchText);
+					if (log.isDebugEnabled())
+						log.debug("######### findBenefactor by name,searchText: " + searchText);
 					benefactorsList = userRepository.findByTypeAndEnabledTrueAndDisplayNameContainingOrderByDisplayName(
 							UserTypeEnum.BENEFACTOR, searchText);
 				} else if (StringUtils.isNumeric(searchText)) {
-					logger.info("######### findBenefactor by mobile,searchText: " + searchText);
+					if (log.isDebugEnabled())
+						log.debug("######### findBenefactor by mobile,searchText: " + searchText);
 					benefactorsList = userRepository
 							.findByTypeAndEnabledTrueAndMobileNumberStartingWithOrderByDisplayName(
 									UserTypeEnum.BENEFACTOR, searchText);
 				}
 			}
-			logger.info("###### findBenefactor,benefactorsList: " + benefactorsList.size());
+			if (log.isDebugEnabled())
+				log.debug("###### findBenefactor,benefactorsList: " + benefactorsList.size());
 			List<BenefactorDTO> resultList = convertBenefactorListToDTO(benefactorsList);
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, resultList, errorCodeRepository, lang);
 		} catch (Exception e) {
-			logger.error("Exception in findBenefactor webservice: ", e);
+			log.error("Exception in findBenefactor webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -518,7 +521,7 @@ public class CharityWebService extends CharityServiceBase {
 				return new ServiceResponse(ErrorCodeEnum.ACCESS_DENIED, errorCodeRepository, lang);
 			}
 		} catch (Exception e) {
-			logger.error("Exception in refreshApplicationCache webservice: ", e);
+			log.error("Exception in refreshApplicationCache webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -560,7 +563,7 @@ public class CharityWebService extends CharityServiceBase {
 			}
 			result = sb.toString();
 		} catch (Exception e) {
-			logger.error("Exception in sendSMS: ", e);
+			log.error("Exception in sendSMS: ", e);
 		} finally {
 			if (connection != null)
 				connection.disconnect();
@@ -568,7 +571,7 @@ public class CharityWebService extends CharityServiceBase {
 				try {
 					bufferedReader.close();
 				} catch (IOException e) {
-					logger.error("Exception in sendSMS: ", e);
+					log.error("Exception in sendSMS: ", e);
 				}
 		}
 		return result;
@@ -589,11 +592,11 @@ public class CharityWebService extends CharityServiceBase {
 			DelegateCoupon delegateCoupon = new DelegateCoupon(new User(new BigInteger(delegateId).longValue()),
 					new Coupon(new BigInteger(couponId).longValue()));
 			delegateCouponRepository.save(delegateCoupon);
-			logger.info("######## addFavorite,id: " + delegateCoupon.getId());
+			log.info("######## addFavorite,id: " + delegateCoupon.getId());
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, new GeneralResponseDTO(true), errorCodeRepository,
 					lang);
 		} catch (Exception e) {
-			logger.error("Exception in addToFavorites webservice: ", e);
+			log.error("Exception in addToFavorites webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}
@@ -611,7 +614,7 @@ public class CharityWebService extends CharityServiceBase {
 			return new ServiceResponse(ErrorCodeEnum.SUCCESS_CODE, new GeneralResponseDTO(true), errorCodeRepository,
 					lang);
 		} catch (Exception e) {
-			logger.error("Exception in removeFromFavorites webservice: ", e);
+			log.error("Exception in removeFromFavorites webservice: ", e);
 			return new ServiceResponse(ErrorCodeEnum.SYSTEM_ERROR_CODE, errorCodeRepository, lang);
 		}
 	}

@@ -226,7 +226,11 @@ public class UserService {
 		user.setGenderType(genderType);
 		if (birthDate != null)
 			user.setBirthDate(birthDate);
+		// sometimes we get duplicate key constraints here
 		user.setUserName(GeneralUtils.generateRandomUserName());
+		if (userRepository.countByUserNameIgnoreCase(user.getUserName()) > 0) {
+			user.setUserName(GeneralUtils.generateRandomUserName());
+		}
 		user.setMobileNumber(mobileNumber);
 		if (user.getCityId() != null && user.getCityId() > 0) {
 			user.setCity(new City(user.getCityId()));

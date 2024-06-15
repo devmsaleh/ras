@@ -313,19 +313,21 @@ public class UserManagementBean implements Serializable {
 		boolean isEmployee = user.getType() == UserTypeEnum.EMPLOYEE;
 		user = userService.loadUserData(user);
 		selectedRolesList = new ArrayList<Role>();
-		log.info("######## setSelectedUser,user: " + user.getId());
-		log.info("######## setSelectedUser,user.getCustody(): " + user.getCustody());
-		log.info("######## setSelectedUser,user.getRoles(): " + user.getRoles().size() + ",selectedRolesList: "
-				+ selectedRolesList.size());
+		// log.info("######## setSelectedUser,user: " + user.getId());
+		// log.info("######## setSelectedUser,user.getCustody(): " + user.getCustody());
+		// log.info("######## setSelectedUser,user.getRoles(): " +
+		// user.getRoles().size() + ",selectedRolesList: "
+		// + selectedRolesList.size());
 		if (isEmployee) {
-			log.info("######## processing all userRoles for employee #########");
+			// log.info("######## processing all userRoles for employee #########");
 			for (UserRole userRole : user.getRoles()) {
-				log.info("######## processing userRole: " + userRole.getId());
+				// log.info("######## processing userRole: " + userRole.getId());
 				if (!userRole.getRole().isHidden())
 					selectedRolesList.add(userRole.getRole());
 			}
-			log.info("######## end of processing all userRoles for employee,selectedRolesList: "
-					+ selectedRolesList.size());
+			// log.info("######## end of processing all userRoles for
+			// employee,selectedRolesList: "
+			// + selectedRolesList.size());
 		}
 		if (isDelegate && user.getCustody() == null) {
 			user.setCustody(new Custody());

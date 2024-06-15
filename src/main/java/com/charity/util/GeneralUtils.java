@@ -270,7 +270,7 @@ public class GeneralUtils {
 	}
 
 	public static String generateRandomUserName() {
-		return String.valueOf(getRandomNumberWithSize(5));
+		return String.valueOf(getRandomNumberWithSize(6));
 	}
 
 	public static int getAge(Date birthday) {
